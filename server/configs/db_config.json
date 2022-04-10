@@ -1,0 +1,9 @@
+{
+    "postgres":{
+      "host":"localhost",
+      "port":"5433",
+      "user":"postgres",
+      "password":"pass",
+      "database":"recrut_db"
+      }
+}

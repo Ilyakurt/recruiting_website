@@ -1,35 +1,24 @@
-from flask import Flask, render_template, request
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from datetime import datetime
+from app import configureApp
+from flask import Flask
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:pass@localhost:5433/recrut_db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
 
-class Article(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    intro = db.Column(db.String(100), nullable=False)
-    text = db.Column(db.Text, nullable=False)
-    date = db.Column(db.DateTime, default=datetime.utcnow)
+from DBCM import error_blueprint
+app.register_blueprint(error_blueprint, url_prefix='/error')
 
-    def __repr__(self):
-        return '<Article @r>' % seld.id
+# from controllers.auth.auth import auth_blueprint
+# app.register_blueprint(auth_blueprint, url_prefix='/auth')
 
-#db.create_all()
-#db.session.commit()
+# from controllers.auth.auth import logout_blueprint
+# app.register_blueprint(logout_blueprint, url_prefix='/logout')
 
-@app.route("/")
-def index():
-    return render_template('index.html')
+from controllers.main.main import main_blueprint
+app.register_blueprint(main_blueprint, url_prefix='/')
 
-@app.route("/create-vacancy")
-def create_vacancy():
-    return render_template('index.html')
-
-if __name__ == "__main__":
-    app.run(debug=True)
-
+if __name__ == '__main__':
+    app = configureApp(app)
+    app.run (
+        debug=app.config['server']['debug'], 
+        host=app.config['server']['host'], 
+        port=app.config['server']['port']
+    )
