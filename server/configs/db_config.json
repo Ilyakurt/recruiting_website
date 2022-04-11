@@ -5,5 +5,19 @@
       "user":"postgres",
       "password":"pass",
       "database":"recrut_db"
-      }
+    },
+    "client":{
+    "host":"localhost",
+    "port":"5433",
+    "user":"client",
+    "password":"client",
+    "database":"recrut_db"
+    },
+    "metodist":{
+        "host":"localhost",
+        "port":"5433",
+        "user":"metodist",
+        "password":"metodist",
+        "database":"recrut_db"
+    }
 }

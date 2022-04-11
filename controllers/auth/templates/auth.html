@@ -63,53 +63,61 @@
 					</form>
 		</nav>
 	</head>
-<!-- 
-	<nav class="navbar navbar-light bg-light">
-		<div class="container-fluid">
-		  <form class="d-flex">
-			<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-			<button class="btn btn-outline-success" type="submit">Search</button>
-		  </form>
-		</div>
-	  </nav> -->
+  <body>
+    <div class="container d-flex justify-content-center">
+      <form method="POST">
+        <div class="row mt-5">
+          <div class="col">
+            <h1>Вход в систему</h1>
+          </div>
+        </div>
 
-<body>
-		
-			{%for res in result%}	
-				<!-- <div class="card" style="width: 40rem;"> -->
-					<div class="card-body">
-						<h2 class="card-title text-center">{{ res.company }}</h2>
-						<p class="card-text text-center">{{ res.description }}</p>
-						<p class="card-text text-center">Зарплата: {{ res.salary }}</p>
-						<p class="card-text text-center">Требуется: {{ res.name }}</p>
-						<!-- <p class="card-text text-center">Требуется: {{ res.id }}</p> -->
-						<!-- <h2>{{ res.salary }}</h2> -->
-						<!-- <h2>{{ res.name }}</h2> -->
-						<form method="POST">
-							<a href="/posts/{{ res.id }}" class="d-grid gap-2 col-6 mx-auto btn btn-primary" name="detail" value="{{ res.id }}">Подробнее</a>
-						</form>
-					</div>
-					<p class="tab"></p>
+        {% if status == 'bad' %}
+        <div class="row">
+            <div class="col">
+                <p style="color: red">Неверный логин или пароль</p>
+            </div>
+        </div>
+        {% endif %} {% if new_user_login %}
+        <div class="row">
+            <div class="col">
+                <p style="color: green">
+                Пользователь <b>'{{ new_user_login }}'</b> создан
+                </p>
+            </div>
+        </div>
+        {% endif %}
 
-				<!-- </div> -->
-			{% endfor %}
-	<nav aria-label="Page navigation example">
-		<ul class="pagination">
-			<li class="page-item">
-			<a class="page-link" href="" aria-label="Previous">
-				<span aria-hidden="true">&laquo;</span>
-			</a>
-			</li>
-			<li class="page-item"><a class="page-link" href="#">1</a></li>
-			<li class="page-item"><a class="page-link" href="#">2</a></li>
-			<li class="page-item"><a class="page-link" href="#">3</a></li>
-			<li class="page-item">
-			<a class="page-link" href="#" aria-label="Next">
-				<span aria-hidden="true">&raquo;</span>
-			</a>
-			</li>
-		</ul>
-		</nav>
+        <!-- <hr /> -->
+        <p class="tab"></p>
 
-</body>
+        <div class="row mb-2">
+          <div class="col-md-3 col-3">Логин</div>
+
+          <div class="col-md-3 col">
+            <input type="text" name="login" />
+          </div>
+        </div>
+
+        <div class="row mb-2">
+          <div class="col-md-3 col-3">Пароль</div>
+          <div class="col-md-3 col">
+            <input type="password" name="password" />
+          </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col mb-2">
+                <button type="submit" name="login_button" class="btn btn-success" style="width: 110px">Вход</button>
+            </div>
+            <div class="col">
+                <button type="submit" name="registration_button" class="btn btn-secondary" style="width: 110px">Регистрация</button>          
+            </div>
+        </div>
+        <div class="col">
+            <a href="/#" class="btn btn-primary" style="width: 265px">Вернуться в главное меню</a>
+        </div>
+      </form>
+    </div>
+  </body>
 </html>
