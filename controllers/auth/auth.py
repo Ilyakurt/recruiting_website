@@ -18,16 +18,17 @@ def authorization():
         if login and password:
             with UseDatabase(current_app.config['db']['postgres']) as cursor:
                 cursor.execute ("""
-                    SELECT role, user_id 
+                    SELECT role, user_id, comp_name
                     FROM users
                     WHERE login='%s' AND password='%s'
                     """ % (login, password))
-                schema = ['role', 'user_id']
+                schema = ['role', 'user_id', 'comp_name']
                 for con in cursor.fetchall():
                     result.append(dict(zip(schema, con)))
             if len(result) > 0:
                 session['role'] = result[0]['role']
                 session['user_id'] = result[0]['user_id']
+                session['comp_name'] = result[0]['comp_name']
                 session['user'] = login
                 # logger.info(session['name'] + " вошёл в систему")
                 return redirect(url_for('main_blueprint.main'))
@@ -89,4 +90,5 @@ def logout():
     session.pop('role')
     session.pop('user_id')
     session.pop('user')
+    session.pop('comp_name')
     return redirect(url_for('auth_blueprint.authorization'))
