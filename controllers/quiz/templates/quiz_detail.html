@@ -48,12 +48,12 @@
 					{%endif%}
 					
 					<li class="nav-item">
-						<a class="nav-link active" aria-current="page" href="/quiz" name="new_vacancy">Тесты</a>
+						<a class="nav-link active" aria-current="page" href="/quiz/quiz" name="new_vacancy">Тесты</a>
 					</li>
 					
 					{%if session['role'] == 'admin'%}
 					<li class="nav-item">
-						<a class="nav-link active" aria-current="page" href="/response" name="new_vacancy">Отклики</a>
+						<a class="nav-link active" aria-current="page" href="#" name="new_vacancy">Отклики</a>
 					</li>
 					{%endif%}
 
@@ -72,7 +72,7 @@
 					</li>
 					{%endif%}
 					</ul>
-			</div>
+
 		</nav>
 	</head>
 <!-- 
@@ -86,42 +86,26 @@
 	  </nav> -->
 
 <body>
-    <h2 class="p-2 text-start">Создание вакансии</h2>
-    {% if success %}
-    <div class="row p-2 text-start">
-      <div class="col">
-        <p style="color: green">
-          Вакансия успешно создана
-        </p>
-      </div>
-    </div>
-    {% endif %}
-    <form method="post">
-        <div class="input-group w-75 d-inline-flex p-2 bd-highlight gap-2 col-5">
-            <!-- <span class="input-group-text" id="addon-wrapping">@</span> -->
-            <input type="text" name = "name" id = "name" required class="form-control" placeholder="Название вакансии">
+    <form method="GET">
+    {%for res in result%}	
+        <!-- <div class="card" style="width: 40rem;"> -->
+        <div class="card-body">
+            <h2 class="card-title text-center">Тема: {{ res.subject }}</h2>
+            <p class="card-text text-center">{{ res.description }}</p>
+            <!-- <p class="card-text text-center">Требуется: {{ res.id }}</p> -->
+            <!-- <h2>{{ res.salary }}</h2> -->
+            <!-- <h2>{{ res.name }}</h2> -->
         </div>
-        <div class="input-group w-75 p-2">
-            <textarea type="text" name = "full_description" required id = "full_description" class="form-control" placeholder="Описание" style="height: 200px"></textarea>
-            <!-- <label for="floatingTextarea2">Описание</label> -->
-          </div>
-        <div class="input-group w-75 d-inline-flex p-2 bd-highlight">
-            <span class="input-group-text" id="addon-wrapping">₽</span>
-            <input type="text" name = "salary" id = "salary" class="form-control" placeholder="Зарплата" aria-describedby="addon-wrapping">
-        </div>
-        <div class="input-group w-75 d-inline-flex p-2 bd-highlight">
-            <!-- <span class="input-group-text" id="addon-wrapping">@</span> -->
-            <input type="text" name = "email" id = "email" required class="form-control" placeholder="Email" aria-describedby="addon-wrapping">
-        </div>
-        <div class="input-group w-75 d-inline-flex p-2 bd-highlight">
-            <!-- <span class="input-group-text" id="addon-wrapping">@</span> -->
-            <input type="text" name = "address" id = "address" required class="form-control" placeholder="Адрес" aria-describedby="addon-wrapping">
-        </div>
-        <p></p>
-        <button style="margin-left: 10px;" type="button" class="btn btn-secondary">Прикрепить тест</button>
         <p class="tab"></p>
-        <input style="margin-left: 10px;" name = "add_button" type="submit" value ="Опубликовать вакансию" class="btn btn-success"></a>
-
+        <!-- </div> -->
+    {% endfor %}
     </form>
+    <form method="POST">
+		<div class="row">
+			<div class="col">
+				<button type="submit" name="quiz" class="d-grid gap-2 col-4 mx-auto btn btn-primary">Пройти тест</button>
+			</div>
+		</div>
+	</form>
 </body>
 </html>

@@ -5,6 +5,7 @@ from DBCM import UseDatabase
 class UsersModel:
     def __init__(self, role):
         self.permission = role
+        print ('role is', role)
 
     # добавление пользователя (если успешно, то возвращает id нового пользователя, иначе - None)
     def insert_users(self, login, password, role):

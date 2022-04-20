@@ -85,43 +85,26 @@
 		</div>
 	  </nav> -->
 
-<body>
-    <h2 class="p-2 text-start">Создание вакансии</h2>
-    {% if success %}
-    <div class="row p-2 text-start">
-      <div class="col">
-        <p style="color: green">
-          Вакансия успешно создана
-        </p>
-      </div>
+<body>	
+    <div class="card-body">
+        </form>
     </div>
-    {% endif %}
-    <form method="post">
-        <div class="input-group w-75 d-inline-flex p-2 bd-highlight gap-2 col-5">
-            <!-- <span class="input-group-text" id="addon-wrapping">@</span> -->
-            <input type="text" name = "name" id = "name" required class="form-control" placeholder="Название вакансии">
-        </div>
-        <div class="input-group w-75 p-2">
-            <textarea type="text" name = "full_description" required id = "full_description" class="form-control" placeholder="Описание" style="height: 200px"></textarea>
-            <!-- <label for="floatingTextarea2">Описание</label> -->
-          </div>
-        <div class="input-group w-75 d-inline-flex p-2 bd-highlight">
-            <span class="input-group-text" id="addon-wrapping">₽</span>
-            <input type="text" name = "salary" id = "salary" class="form-control" placeholder="Зарплата" aria-describedby="addon-wrapping">
-        </div>
-        <div class="input-group w-75 d-inline-flex p-2 bd-highlight">
-            <!-- <span class="input-group-text" id="addon-wrapping">@</span> -->
-            <input type="text" name = "email" id = "email" required class="form-control" placeholder="Email" aria-describedby="addon-wrapping">
-        </div>
-        <div class="input-group w-75 d-inline-flex p-2 bd-highlight">
-            <!-- <span class="input-group-text" id="addon-wrapping">@</span> -->
-            <input type="text" name = "address" id = "address" required class="form-control" placeholder="Адрес" aria-describedby="addon-wrapping">
-        </div>
-        <p></p>
-        <button style="margin-left: 10px;" type="button" class="btn btn-secondary">Прикрепить тест</button>
-        <p class="tab"></p>
-        <input style="margin-left: 10px;" name = "add_button" type="submit" value ="Опубликовать вакансию" class="btn btn-success"></a>
-
-    </form>
+    <p class="tab"></p>
 </body>
+{%for res in result_1%}	
+<!-- <div class="card" style="width: 40rem;"> -->
+    <div class="card-body">
+        <h2 class="card-text text-center">Пользователь {{ res.id_user }} заинтересовался вашей вакансией на должность - "{{ res.name }}"</h2>
+        <!-- <p class="card-text text-center">Требуется: {{ res.id }}</p> -->
+        <!-- <h2>{{ res.salary }}</h2> -->
+        <!-- <h2>{{ res.name }}</h2> -->
+        </form>
+    </div>
+	
+	<form method="POST">
+		<a  style="margin: 10px;" class="d-grid gap-2 col-5 mx-auto btn btn-primary" name="detail" value="{{ res.id }}">Посмотреть резюме</a>
+	</form>
+
+<!-- </div> -->
+{% endfor %}
 </html>

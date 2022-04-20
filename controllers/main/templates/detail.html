@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Working with db</title>
 		<link
 			href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
@@ -24,7 +25,11 @@
 	<head>
 		<nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
 			<div class="container-fluid">
-			  	<a class="navbar-brand" style="margin-bottom: 4px;" href="/#">Recruting</a>
+			  	<a class="navbar-brand" style="margin-bottom: 4px;" href="/#">
+					<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-briefcase" viewBox="0 0 20 20">
+						<path d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v8A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1h-3zm0 1h3a.5.5 0 0 1 .5.5V3H6v-.5a.5.5 0 0 1 .5-.5zm1.886 6.914L15 7.151V12.5a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5V7.15l6.614 1.764a1.5 1.5 0 0 0 .772 0zM1.5 4h13a.5.5 0 0 1 .5.5v1.616L8.129 7.948a.5.5 0 0 1-.258 0L1 6.116V4.5a.5.5 0 0 1 .5-.5z"/>
+					</svg>
+					Recruting</a>
 			  	<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 			  	</button>
@@ -35,58 +40,71 @@
 						<a class="nav-link active" aria-current="page" href="/auth/auth">Авторизация</a>
 					</li>
 					{%endif%}
+					
 					{%if session['role'] == 'admin'%}
 				  	<li class="nav-item">
 						<a class="nav-link active" aria-current="page" href="/new_vacancy" name="new_vacancy">Создание вакансии</a>
 					</li>
 					{%endif%}
+					
 					<li class="nav-item">
-						<a class="nav-link active" aria-current="page" href="#" name="new_vacancy">Тесты</a>
+						<a class="nav-link active" aria-current="page" href="/quiz" name="new_vacancy">Тесты</a>
 					</li>
+					
+					{%if session['role'] == 'admin'%}
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="/response" name="new_vacancy">Отклики</a>
+					</li>
+					{%endif%}
+
 					{%if session%}
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 							{{ session['user'] }}
 						</a>
 						<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-							<li><a class="dropdown-item" href="#">Выйти</a></li>
-							<!-- <li><a class="dropdown-item" href="#">Another action</a></li> -->
-							<!-- <li><hr class="dropdown-divider"></li> -->
-							<!-- <li><a class="dropdown-item" href="#">Something else here</a></li> -->
+							<li><a class="dropdown-item" href="#">Личный кабинет</a></li>
+							<li><a class="dropdown-item" href="#">Вакансии</a></li>
+							<li><a class="dropdown-item" href="#">Уведомления</a></li>
+							<li><hr class="dropdown-divider"></li>
+							<li><button class="dropdown-item danger" onclick="window.location.href='{{ url_for('logout_blueprint.logout') }}';">Выход</button></li>
 						</ul>
 					</li>
 					{%endif%}
 					</ul>
-					<form class="d-flex">
-					  <input class="form-control me-2"  type="search" placeholder="Поиск" aria-label="Search">
-					  <button class="btn btn-outline-success" type="submit" >Поиск</button>
-					</form>
+			</div>
 		</nav>
 	</head>
-	<!-- <div class="card" style="width: 18rem;">
-		<img src="..." class="card-img-top" alt="...">
-		<div class="card-body">
-		  <h5 class="card-title">Card title</h5>
-		  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-		  <a href="#" class="btn btn-primary">Go somewhere</a>
+<!-- 
+	<nav class="navbar navbar-light bg-light">
+		<div class="container-fluid">
+		  <form class="d-flex">
+			<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+			<button class="btn btn-outline-success" type="submit">Search</button>
+		  </form>
 		</div>
-	</div> -->
+	  </nav> -->
+
 <body>
-			{%for res in result%}	
-				<!-- <div class="card" style="width: 40rem;"> -->
-					<div class="card-body">
-                        <h2 class="card-title">{{ res.company }}</h2>
-						<p class="card-text">{{ res.description }}</p>
-						<p class="card-text">Зарплата: {{ res.salary }}</p>
-						<p class="card-text">Требуется: {{ res.name }}</p>
-                        <p style="margin-right: 200px;" class="card-text">Описание: {{ res.full_description }}</p>
-                        <p class="card-text">Email: {{ res.email }}</p>
-                        <p class="card-text">Address: {{ res.address }}</p>
-						<!-- <h2>{{ res.salary }}</h2> -->
-						<!-- <h2>{{ res.name }}</h2> -->
-				<!-- </div> -->
-			{% endfor %}
-        <button type="button" class="btn btn-success">Откликнуться</button>
-        <a href="/#" class="btn btn-primary">Вернуться обратно</a>
+	<form method="POST">
+	{%for res in result%}	
+		<div class="card-body">
+			<h2 class="card-title">{{ res.company }}</h2>
+			<p class="card-text">{{ res.description }}</p>
+			<p class="card-text">Зарплата: {{ res.salary }}</p>
+			<p class="card-text">Требуется: {{ res.name }}</p>
+			<p style="margin-right: 200px;" class="card-text">Описание: {{ res.full_description }}</p>
+			<p class="card-text">Email: {{ res.email }}</p>
+			<p class="card-text">Address: {{ res.address }}</p>
+		</div>
+	{% endfor %}
+	<form method="POST">
+		<div class="row">
+			<div class="col">
+				<button style="margin-left: 10px;" type="submit" name="response_button" class="mt-2 btn btn-success">Откликнуться</button>
+				<a href="/#" class="btn btn-primary mt-2">Вернуться обратно</a>
+			</div>
+		</div>
+	</form>
 </body>
 </html>

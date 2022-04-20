@@ -2,23 +2,39 @@ from flask import render_template, request, session, redirect, Blueprint, curren
 from DBCM import UseDatabase
 
 
-class ProjectModel:
+class Vacancy:
     def __init__(self, role):
         self.permission = role
+        print ('role is', role)
 
     # получение информации о всех проектах
-    def get_projects(self, user_id):
+    def add_vacancy(self, user_id):
         result = []
         with UseDatabase(current_app.config['db'][self.permission]) as cursor:
-            cursor.execute("""SELECT login, password, role, user_id
+            cursor.execute("""SELECT login, password, role, user_id, comp_name
                               FROM users
                               WHERE user_id = %s
                               """, (user_id))
-            schema = ['login', 'password', 'role', 'user_id']
+            schema = ['login', 'password', 'role', 'user_id', 'comp_name']
             for con in cursor.fetchall():
                 result.append(dict(zip(schema, con)))
         return result
 
+    def select_response(self):
+        with UseDatabase(current_app.config['db'][self.permission]) as cursor:
+            cursor.execute("""
+                SELECT id_vac, name, id_user, status
+                FROM user_vacancy u
+                JOIN vacancy v
+                ON u.id_vac = v.id
+            """)
+            schema = ['id_vac', 'name', 'id_user', 'status']
+            result = []
+            for con in cursor.fetchall():
+                result.append(dict(zip(schema, con)))
+        return result
+
+        
     # def insert_project(self, user_id, name, description):
     #     with UseDatabase(current_app.config['db'][self.permission]) as cursor:
     #         cursor.execute("""INSERT INTO project 
