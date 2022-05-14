@@ -38,10 +38,13 @@ def authorization():
             return render_template('auth.html', status='bad')
     elif 'registration_button' in request.form:
         return render_template('user_create.html', user_data={}, already_exists=False)
+    elif 'registration_employer_button' in request.form:
+        return render_template('employer_create.html', user_data={}, already_exists=False)
     elif 'save_new_user' in request.form:
         data = request.form
         if data['password'] == data['repeat_password']:
-            exists, user_data = create_new_user(data)
+            role = 'client'
+            exists, user_data = create_new_user(data, role)
             if not exists:
                 #logger.info(session['name'] + " создал нового пользователя")
                 return render_template('auth.html', new_user_login=data['login'])
@@ -49,23 +52,52 @@ def authorization():
                 return render_template('user_create.html', user_data=user_data, already_exists=True)
         else:
             return render_template('user_create.html', mismatched_passwords=True, new_user_login=data['login'])
+    elif 'save_new_employer' in request.form:
+        data = request.form
+        # create_new_employer(data)
+        if data['password'] == data['repeat_password']:
+            role = 'employer'
+            exists, user_data = create_new_employer_insert(data, role)
+            if not exists:
+                #logger.info(session['name'] + " создал нового пользователя")
+                create_new_employer(data, user_data)
+                return render_template('auth.html', new_user_login=data['login'])
+            else:
+                print (data)
+                return render_template('employer_create.html', user_data=user_data, already_exists=True, data=data)
+        else:
+            return render_template('employer_create.html', mismatched_passwords=True, data=data)
     else:
         return render_template('auth.html')
 
 
-def create_new_user(data):
+def create_new_user(data, role):
     model = users.UsersModel('postgres')
     user_login = data.get("login")
     user_password = data.get("password")
-    user_role = 'client'
+    user_role = role
     created = model.insert_users(user_login, user_password, user_role)
-    print (created)
     if created == 'None':
         return True, {'login': user_login,
                       'password': user_password,
                       'role': user_role}
     else:
-        return False, {}
+        return False, created
+
+def create_new_employer_insert(data, role):
+    model = users.UsersModel('postgres')
+    user_login = data.get("login")
+    user_password = data.get("password")
+    user_company = data.get("company")
+    user_role = role
+    created = model.insert_employer_to_users(user_login, user_password, user_role, user_company)
+    if created == 'None':
+        return True, {'login': user_login,
+                      'password': user_password,
+                      'role': user_role,
+                      'company': user_company}
+    else:
+        return False, created
 
 def login_required(f):
     @wraps(f)
@@ -74,6 +106,20 @@ def login_required(f):
             return redirect(url_for('auth_blueprint.authorization'))
         return f(*args, **kwargs)
     return decorated_function
+
+def create_new_employer(data, user_id):
+    model = users.UsersModel('postgres')
+    data = request.form
+    user_name = data.get("name")
+    user_last_name = data.get("last_name")
+    user_company = data.get("company")
+    user_phone = data.get("phone")
+    user_email = data.get("email")
+    user_city = data.get("city")
+    user_address = data.get("address")
+    user_id = user_id
+    created = model.insert_employer(user_name, user_last_name, user_company, user_phone, user_email, user_city, user_address, user_id)
+    print ("Был создан user_id", created)
 
 
 # def admin_rights_required(f):
