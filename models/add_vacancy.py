@@ -23,7 +23,7 @@ class Vacancy:
     def select_response(self):
         with UseDatabase(current_app.config['db'][self.permission]) as cursor:
             cursor.execute("""
-                SELECT id_vac, name, id_user, status
+                SELECT id_vac, name, u.id_user, status
                 FROM user_vacancy u
                 JOIN vacancy v
                 ON u.id_vac = v.id

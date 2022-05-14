@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+		<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Регистрация работодателя</title>
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
+			crossorigin="anonymous"
+	  	/>
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+			crossorigin="anonymous"
+		></script>
+	  	<style>
+			.nounderline {
+		  	text-decoration: none !important;
+		}
+	  	</style>
+          <script>
+            function cancel() {
+              document.getElementById("login").removeAttribute("required");
+              document.getElementById("password").removeAttribute("required");
+              document.getElementById("repeat_password").removeAttribute("required");
+            }
+          </script>
+	</head>
+	<head>
+		<nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
+			<div class="container-fluid">
+			  	<a class="navbar-brand" style="margin-bottom: 4px;" href="/#">Recruting</a>
+			  	<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+			  	</button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+					{%if not session%}
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="/auth/auth">Авторизация</a>
+					</li>
+					{%endif%}
+					
+					{%if session['role'] == 'admin'%}
+				  	<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="/new_vacancy" name="new_vacancy">Создание вакансии</a>
+					</li>
+					{%endif%}
+					
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="/quiz/quiz" name="new_vacancy">Тесты</a>
+					</li>
+					
+					{%if session['role'] == 'admin'%}
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="#" name="new_vacancy">Отклики</a>
+					</li>
+					{%endif%}
+
+					{%if session%}
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							{{ session['user'] }}
+						</a>
+						<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+							<li><a class="dropdown-item" href="#">Личный кабинет</a></li>
+							<li><a class="dropdown-item" href="#">Вакансии</a></li>
+							<li><a class="dropdown-item" href="#">Уведомления</a></li>
+							<li><hr class="dropdown-divider"></li>
+							<li><button class="dropdown-item danger" onclick="window.location.href='{{ url_for('logout_blueprint.logout') }}';">Выход</button></li>
+						</ul>
+					</li>
+					{%endif%}
+					</ul>
+
+		</nav>
+	</head>
+  <body>
+    <div class="container d-flex justify-content-center">
+      <form method="POST">
+        <div class="row mt-5">
+          <div class="col">
+            <h1>Регистрация работодателя</h1>
+          </div>
+        </div>
+
+        {% if already_exists %}
+        <div class="row">
+          <div class="col">
+            <p style="color: red">
+              Пользователь <b>{{ user_data['login'] }}</b> уже существует
+            </p>
+          </div>
+        </div>
+        {% endif %} {% if mismatched_passwords %}
+        <div class="row">
+          <div class="col">
+            <p style="color: red">Пароли не совпадают</p>
+          </div>
+        </div>
+
+        {% endif %}
+
+
+        <div class="row">
+            <div class="col-5">
+              <p>Имя</p>
+            </div>
+            <div class="col">
+              <p>
+                <input type="text" name="name" id="name" 
+                  {% if mismatched_passwords %}
+                      value="{{ data['name'] }}"
+                  {% endif %}
+                  {% if already_exists %}
+                  value="{{ data['name'] }}"
+                  {% endif %}
+                  required
+                />
+              </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-5">
+              <p>Фамилия</p>
+            </div>
+            <div class="col">
+              <p>
+                <input type="text" name="last_name" id="last_name" 
+                  {% if mismatched_passwords %}
+                      value="{{ data['last_name'] }}"
+                  {% endif %}
+                  {% if already_exists %}
+                  value="{{ data['last_name'] }}"
+                  {% endif %}
+                  required
+                />
+              </p>
+            </div>
+        </div>
+
+        
+        <div class="row">
+            <div class="col-5">
+              <p>Телефон</p>
+            </div>
+            <div class="col">
+              <p>
+                <input type="text" name="phone" id="phone" 
+                  {% if mismatched_passwords %}
+                      value="{{ data['phone'] }}"
+                  {% endif %}
+                  {% if already_exists %}
+                  value="{{ data['phone'] }}"
+                  {% endif %}
+                  required
+                />
+              </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-5">
+              <p>Email</p>
+            </div>
+            <div class="col">
+              <p>
+                <input type="text" name="email" id="email" 
+                  {% if mismatched_passwords %}
+                      value="{{ data['email'] }}"
+                  {% endif %}
+                  {% if already_exists %}
+                  value="{{ data['email'] }}"
+                  {% endif %}
+                  required
+                />
+              </p>
+            </div>
+        </div>
+
+        
+        <div class="row">
+            <div class="col-5">
+              <p>Название компании</p>
+            </div>
+            <div class="col">
+              <p>
+                <input type="text" name="company" id="company" 
+                  {% if mismatched_passwords %}
+                      value="{{ data['company'] }}"
+                  {% endif %}
+                  {% if already_exists %}
+                  value="{{ data['company'] }}"
+                  {% endif %}
+                  required
+                />
+              </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-5">
+              <p>Город</p>
+            </div>
+            <div class="col">
+              <p>
+                <input type="text" name="city" id="city" 
+                  {% if mismatched_passwords %}
+                      value="{{ data['city'] }}"
+                  {% endif %}
+                  {% if already_exists %}
+                  value="{{ data['city'] }}"
+                  {% endif %}
+                  required
+                />
+              </p>
+            </div>
+        </div>
+
+
+        <div class="row">
+          <div class="col-5">
+            <p>Адрес</p>
+          </div>
+          <div class="col">
+            <p>
+              <input type="text" name="address" id="address" 
+                {% if mismatched_passwords %}
+                    value="{{ data['address'] }}"
+                {% endif %}
+                {% if already_exists %}
+                value="{{ data['address'] }}"
+                {% endif %}
+                required
+              />
+            </p>
+          </div>
+      </div>
+
+        <div class="row">
+          <div class="col-5">
+            <p>Логин</p>
+          </div>
+          <div class="col">
+            <p>
+              <input type="text" name="login" id="login" 
+                {% if mismatched_passwords %}
+                    value="{{ data['login'] }}"
+                {% endif %}
+                required
+              />
+            </p>
+          </div>
+      </div>
+
+      <div class="row">
+        <div class="col-5">
+          <p>Пароль</p>
+        </div>
+        <div class="col">
+          <p>
+            <input type="text" name="password" id="password" 
+              {% if mismatched_passwords %}
+                  value="{{ new_user_password }}"
+              {% endif %}
+              required
+            />
+          </p>
+        </div>
+    </div>
+
+    <div class="row">
+      <div class="col-5">
+        <p>Повторите пароль</p>
+      </div>
+      <div class="col">
+        <p>
+          <input type="text" name="repeat_password" id="repeat_password" 
+            {% if mismatched_passwords %}
+                value="{{ new_user_repeat_password }}"
+            {% endif %}
+            required
+          />
+        </p>
+      </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col mb-1">
+        <button type="submit" name="save_new_employer" class="btn btn-primary" style="width: 130px">Регистарция</button>
+        <a href="/auth/auth" type="submit" name="registration_button" class="btn btn-secondary" style="width: 130px">Отмена</a>  
+    </div>
+</div>
+
+      </form>
+    </div>
+  </body>
+</html>

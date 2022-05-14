@@ -46,11 +46,11 @@ class Quiz:
     def quiz_question(self, qid):
         with UseDatabase(current_app.config['db']['postgres']) as cursor:
             cursor.execute("""
-                SELECT question, answer, option1, option2, option3, option4, qq_id
+                SELECT qid, question, answer, option1, option2, option3, option4, qq_id
                 FROM quiz_question
                 WHERE qid = %s
                 """ % (qid))
-            schema = ['question', 'answer', 'option1', 'option2', 'option3', 'option4', 'qq_id']
+            schema = ['qid', 'question', 'answer', 'option1', 'option2', 'option3', 'option4', 'qq_id']
             result = []
             for con in cursor.fetchall():
                 result.append(dict(zip(schema, con)))
@@ -68,3 +68,14 @@ class Quiz:
             for con in cursor.fetchall():
                 result.append(dict(zip(schema, con)))
             return result
+
+    def user_result_insert(self, qid, qq_id, answer, type_answer, user_id):
+        with UseDatabase(current_app.config['db']['postgres']) as cursor:
+            cursor.execute("""
+                INSERT INTO quiz_user_answers (qid, qq_id, answer, type_answer, user_id)
+                VALUES (%s, %s, %s, %s, %s)
+                RETURNING user_id
+                """ % (qid, qq_id, answer, type_answer, user_id))
+            result = str(cursor.fetchone())
+            print (result)
+        return result

@@ -85,26 +85,69 @@
 		</div>
 	  </nav> -->
 
-<body>
-	<form method="POST">
-	{%for res in result%}	
-		<div class="card-body">
-			<h2 class="card-title">{{ res.company }}</h2>
-			<p class="card-text">{{ res.description }}</p>
-			<p class="card-text">Зарплата: {{ res.salary }}</p>
-			<p class="card-text">Требуется: {{ res.name }}</p>
-			<p style="margin-right: 200px;" class="card-text">Описание: {{ res.full_description }}</p>
-			<p class="card-text">Email: {{ res.email }}</p>
-			<p class="card-text">Address: {{ res.address }}</p>
-		</div>
-	{% endfor %}
-	<form method="POST">
-		<div class="row">
-			<div class="col">
-				<button style="margin-left: 10px;" type="submit" name="response_button" class="mt-2 btn btn-success">Откликнуться</button>
-				<a href="/#" class="btn btn-primary mt-2">Вернуться обратно</a>
+	<body>
+		<div class="container">
+			<form method="GET">
+				{%for res in result%}
+				<div class="row mt-4">
+					<div class="col">
+						<h2 class="card-title">{{ res.company }}</h2>
+						<p class="card-text text-break">{{ res.description }}</p>
+						<p class="card-text">Зарплата: {{ res.salary }}</p>
+						<p class="card-text">Требуется: {{ res.name }}</p>
+						<p class="card-text">Описание: {{ res.full_description }}</p>
+						<p class="card-text">Email: {{ res.email }}</p>
+						<p class="card-text">Address: {{ res.address }}</p>
+					</div>
+				</div>
+				{% endfor %}
+			</form>
+			<form method="POST">
+				<div class="row">
+					<div class="col">
+						{%if session%}
+						<button name="response_button"  type="submit"  class="mt-2 btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
+							Откликнуться
+						</button>
+						<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="exampleModalLabel">Ваше резюме успешно отправилено</h5>
+									</div>
+									<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+									<!-- <a href="/auth/auth" class="btn btn-primary">Регистарция</a> -->
+									</div>
+								</div>
+							</div>
+						</div>
+						{%endif%}
+						{%if not session%}
+						<button name="response_button" type="button" class="mt-2 btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
+							Откликнуться
+						</button>
+						<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="exampleModalLabel">Необходимо зарегестрироваться в системе</h5>
+									</div>
+									<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+									<a href="/auth/auth" class="btn btn-primary">Регистарция</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						{%endif%}
+						<a href="/#" class="btn btn-primary mt-2">Вернуться обратно</a>
+						
+
+					</div>
+					
+				</div>
 			</div>
-		</div>
-	</form>
-</body>
+		</form>
+	</body>
 </html>

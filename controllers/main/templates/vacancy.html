@@ -4,7 +4,7 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Working with db</title>
+		<title>Рекрутинг</title>
 		<link
 			href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
 			rel="stylesheet"
@@ -25,7 +25,7 @@
 	<head>
 		<nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
 			<div class="container-fluid">
-			  	<a class="navbar-brand" style="margin-bottom: 4px;" href="/#">
+			  	<a class="navbar-brand" style="margin-bottom: 4px;" href="/">
 					<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-briefcase" viewBox="0 0 20 20">
 						<path d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v8A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1h-3zm0 1h3a.5.5 0 0 1 .5.5V3H6v-.5a.5.5 0 0 1 .5-.5zm1.886 6.914L15 7.151V12.5a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5V7.15l6.614 1.764a1.5 1.5 0 0 0 .772 0zM1.5 4h13a.5.5 0 0 1 .5.5v1.616L8.129 7.948a.5.5 0 0 1-.258 0L1 6.116V4.5a.5.5 0 0 1 .5-.5z"/>
 					</svg>
@@ -35,13 +35,9 @@
 			  	</button>
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-					{%if not session%}
-					<li class="nav-item">
-						<a class="nav-link active" aria-current="page" href="/auth/auth">Авторизация</a>
-					</li>
-					{%endif%}
+
 					
-					{%if session['role'] == 'admin'%}
+					{%if session['role'] == 'admin' or 'employer'%}
 				  	<li class="nav-item">
 						<a class="nav-link active" aria-current="page" href="/new_vacancy" name="new_vacancy">Создание вакансии</a>
 					</li>
@@ -51,9 +47,15 @@
 						<a class="nav-link active" aria-current="page" href="/quiz" name="new_vacancy">Тесты</a>
 					</li>
 					
-					{%if session['role'] == 'admin'%}
+					{%if session['role'] == 'admin' or 'employer'%}
 					<li class="nav-item">
 						<a class="nav-link active" aria-current="page" href="/response" name="new_vacancy">Отклики</a>
+					</li>
+					{%endif%}
+					
+					{%if not session%}
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="/auth/auth">Авторизация</a>
 					</li>
 					{%endif%}
 
@@ -63,15 +65,30 @@
 							{{ session['user'] }}
 						</a>
 						<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-							<li><a class="dropdown-item" href="#">Личный кабинет</a></li>
-							<li><a class="dropdown-item" href="#">Вакансии</a></li>
-							<li><a class="dropdown-item" href="#">Уведомления</a></li>
+							<li><a class="dropdown-item" href="/profile">Личный кабинет</a></li>
+
+							{%if session['role'] == 'admin' or 'employer'%}
+								<li><a class="dropdown-item" href="/vacancy">Вакансии</a></li>
+							{%endif%}
+
+							{%if session['role'] == 'client'%}
+								<li><a class="dropdown-item" href="/user/response">Мое резюме</a></li>
+							{%endif%}
+
+							{%if session['role'] == 'admin' or 'employer'%}
+								<li><a class="dropdown-item" href="#">Тесты</a></li>
+							{%endif%}
+
+							{%if session['role'] == 'client'%}
+								<li><a class="dropdown-item" href="/user/notifications">Уведомления</a></li>
+							{%endif%}
+
 							<li><hr class="dropdown-divider"></li>
 							<li><button class="dropdown-item danger" onclick="window.location.href='{{ url_for('logout_blueprint.logout') }}';">Выход</button></li>
 						</ul>
 					</li>
 					{%endif%}
-					</ul>
+				</ul>
 			</div>
 		</nav>
 	</head>
@@ -86,7 +103,8 @@
 	  </nav> -->
 
 <body>
-    <h2 class="p-2 text-start">Создание вакансии</h2>
+	<div class="container">
+    <h2 class="p-2 text-start mt-4">Создание вакансии</h2>
     {% if success %}
     <div class="row p-2 text-start">
       <div class="col">
@@ -97,23 +115,23 @@
     </div>
     {% endif %}
     <form method="post">
-        <div class="input-group w-75 d-inline-flex p-2 bd-highlight gap-2 col-5">
+        <div class="input-group d-inline-flex p-2 bd-highlight gap-2 col-5">
             <!-- <span class="input-group-text" id="addon-wrapping">@</span> -->
             <input type="text" name = "name" id = "name" required class="form-control" placeholder="Название вакансии">
         </div>
-        <div class="input-group w-75 p-2">
+        <div class="input-group p-2">
             <textarea type="text" name = "full_description" required id = "full_description" class="form-control" placeholder="Описание" style="height: 200px"></textarea>
             <!-- <label for="floatingTextarea2">Описание</label> -->
           </div>
-        <div class="input-group w-75 d-inline-flex p-2 bd-highlight">
+        <div class="input-group d-inline-flex p-2 bd-highlight">
             <span class="input-group-text" id="addon-wrapping">₽</span>
             <input type="text" name = "salary" id = "salary" class="form-control" placeholder="Зарплата" aria-describedby="addon-wrapping">
         </div>
-        <div class="input-group w-75 d-inline-flex p-2 bd-highlight">
+        <div class="input-group d-inline-flex p-2 bd-highlight">
             <!-- <span class="input-group-text" id="addon-wrapping">@</span> -->
             <input type="text" name = "email" id = "email" required class="form-control" placeholder="Email" aria-describedby="addon-wrapping">
         </div>
-        <div class="input-group w-75 d-inline-flex p-2 bd-highlight">
+        <div class="input-group d-inline-flex p-2 bd-highlight">
             <!-- <span class="input-group-text" id="addon-wrapping">@</span> -->
             <input type="text" name = "address" id = "address" required class="form-control" placeholder="Адрес" aria-describedby="addon-wrapping">
         </div>
@@ -123,5 +141,6 @@
         <input style="margin-left: 10px;" name = "add_button" type="submit" value ="Опубликовать вакансию" class="btn btn-success"></a>
 
     </form>
+</div>
 </body>
 </html>

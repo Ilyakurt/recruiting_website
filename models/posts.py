@@ -7,11 +7,28 @@ class PostsModel:
         self.permission = role
         print ('role is', role)
 
-    # добавление пользователя (если успешно, то возвращает id нового пользователя, иначе - None)
     def select_post(self, id):
         with UseDatabase(current_app.config['db']['postgres']) as cursor:
             cursor.execute("""SELECT company, description, name, full_description, salary, email, address FROM vacancy WHERE id = %s""" % (id))
             schema = ['company', 'description', 'name', 'full_description', 'salary', 'email', 'address']
+            result = []
+            for con in cursor.fetchall():
+                result.append(dict(zip(schema, con)))
+        return result
+
+    def search_vacancy(self, name):
+        with UseDatabase(current_app.config['db']['postgres']) as cursor:
+            cursor.execute("""
+                SELECT company, description, salary, name, id 
+                FROM vacancy
+                WHERE 1 = 1 
+                    AND ( 
+                        LOWER(name) LIKE LOWER('%%%s%%')
+                        OR LOWER(company) LIKE LOWER('%%%s%%')
+                        OR LOWER(description) LIKE LOWER('%%%s%%')
+                    )
+            """ % (name, name, name))
+            schema = ['company', 'description', 'salary', 'name', 'id']
             result = []
             for con in cursor.fetchall():
                 result.append(dict(zip(schema, con)))

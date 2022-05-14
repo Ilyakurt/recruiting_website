@@ -87,7 +87,8 @@
 
 <body>
     <form method="POST">
-        {%for res in result%}	
+		<div class="container mt-5">
+        {%for res in result%}
         <!-- <div class="card" style="width: 40rem;"> -->
         <div class="card-body">
             <h3 class="card-title">{{ res.question }}</h3>
@@ -124,7 +125,9 @@
         <p class="tab"></p>
         <!-- </div> -->
         {% endfor %}
-        <input style="margin-left: 10px;" name = "quiz_end" type="submit" value ="Завершить тест" class="btn btn-primary"></a>
+		
+        <button style="margin-left: 10px; margin-bottom: 70px;" name = "quiz_end" value="calculation" type="submit" class="btn btn-primary">Завершить тест</button>
     </form>
+	</div>
 </body>
 </html>

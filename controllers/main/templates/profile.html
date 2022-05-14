@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Рекрутинг</title>
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
+			crossorigin="anonymous"
+	  	/>
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+			crossorigin="anonymous"
+		></script>
+	  	<style>
+			.nounderline {
+		  	text-decoration: none !important;
+		}
+	  	</style>
+	</head>
+	<head>
+		<nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
+			<div class="container-fluid">
+			  	<a class="navbar-brand" style="margin-bottom: 4px;" href="/">
+					<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-briefcase" viewBox="0 0 20 20">
+						<path d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v8A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1h-3zm0 1h3a.5.5 0 0 1 .5.5V3H6v-.5a.5.5 0 0 1 .5-.5zm1.886 6.914L15 7.151V12.5a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5V7.15l6.614 1.764a1.5 1.5 0 0 0 .772 0zM1.5 4h13a.5.5 0 0 1 .5.5v1.616L8.129 7.948a.5.5 0 0 1-.258 0L1 6.116V4.5a.5.5 0 0 1 .5-.5z"/>
+					</svg>
+					Recruting</a>
+			  	<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+			  	</button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+					
+					{%if session['role'] == 'admin' or 'employer'%}
+				  	<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="/new_vacancy" name="new_vacancy">Создание вакансии</a>
+					</li>
+					{%endif%}
+					
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="/quiz" name="new_vacancy">Тесты</a>
+					</li>
+					
+					{%if session['role'] == 'admin' or 'employer'%}
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="/response" name="new_vacancy">Отклики</a>
+					</li>
+					{%endif%}
+					
+					{%if not session%}
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="/auth/auth">Авторизация</a>
+					</li>
+					{%endif%}
+
+					{%if session%}
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							{{ session['user'] }}
+						</a>
+						<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+							<li><a class="dropdown-item" href="/profile">Личный кабинет</a></li>
+
+							{%if session['role'] == 'admin' or 'employer'%}
+								<li><a class="dropdown-item" href="/vacancy">Вакансии</a></li>
+							{%endif%}
+
+							{%if session['role'] == 'client'%}
+								<li><a class="dropdown-item" href="/user/response">Мое резюме</a></li>
+							{%endif%}
+
+							{%if session['role'] == 'admin' or 'employer'%}
+								<li><a class="dropdown-item" href="#">Тесты</a></li>
+							{%endif%}
+
+							{%if session['role'] == 'client'%}
+								<li><a class="dropdown-item" href="/user/notifications">Уведомления</a></li>
+							{%endif%}
+
+							<li><hr class="dropdown-divider"></li>
+							<li><button class="dropdown-item danger" onclick="window.location.href='{{ url_for('logout_blueprint.logout') }}';">Выход</button></li>
+						</ul>
+					</li>
+					{%endif%}
+				</ul>
+
+		</nav>
+	</head>
+
+<body>
+	<div>
+        <form method="post">
+        <div class="container">
+            <div class="row mt-5">
+				{%if session['role'] == 'employer'%}
+				<h2>Профиль пользователя компании {{ result[0]['company'] }}</h2>
+				{%else%}
+				<h2>Профиль пользователя</h2>
+				{%endif%}
+		        {%for res in result%}
+                    <div class="col p-2 mt-3">Имя</div>
+                    {%if res.name == None%}
+                        <div style="color:#505050" class="col-4 p-2 mt-3">Не указано</div>
+                    {%endif%}
+                    {%if res.name != None%}
+                        <div class="col p-2 mt-3">{{ res.name }}</div>
+                    {%endif%}
+                    <a href="#name" class="text-primary text-end col-4 p-2 mt-3" data-bs-toggle="collapse" data-bs-target="#collapseExample_3" aria-expanded="false" aria-controls="collapseExample_3">Изменить</a>
+                    <hr>
+                    <div class="collapse" id="collapseExample_3">
+                        <div class="input-group d-inline-flex p-2 bd-highlight gap-2 col-5">
+                            <input type="text" name = "name"  class="form-control" placeholder="Введите Имя">
+                            <input name = "new_name" type="submit" value ="Сохранить" class="btn btn-primary"></input>
+                        </div>
+                        <hr>
+                    </div>
+					<div class="col p-2">Фамилия</div>
+                    {%if res.last_name == None%}
+                        <div style="color:#505050" class="col-4 p-2">Не указана</div>
+                    {%endif%}
+                    {%if res.last_name != None%}
+                        <div class="col p-2">{{ res.last_name }}</div>
+                    {%endif%}
+                    <a href="#name"  class="text-primary text-end col-4 p-2" data-bs-toggle="collapse" data-bs-target="#collapseExample_4" aria-expanded="false" aria-controls="collapseExample_4">Изменить</a>
+                    <hr>
+                    <div class="collapse" id="collapseExample_4">
+                        <div class="input-group d-inline-flex p-2 bd-highlight gap-2 col-5">
+                            <input type="text" name = "last_name" class="form-control" placeholder="Введите Фамилию">
+                            <input name = "new_last_name" type="submit" value ="Сохранить" class="btn btn-primary"></input>
+                        </div>
+                        <hr>
+                    </div>
+                    <div class="col p-2">Email</div>
+                    {%if res.email == None%}
+                        <div style="color:#505050" class="col-4 p-2">Не указан</div>
+                    {%endif%}
+                    {%if res.email != None%}
+                        <div class="col p-2">{{ res.email }}</div>
+                    {%endif%}
+                    <a href="#email"  class="text-primary text-end col-4 p-2" data-bs-toggle="collapse" data-bs-target="#collapseExample_2" aria-expanded="false" aria-controls="collapseExample_2">Изменить</a>
+                    <hr>
+                    <div class="collapse" id="collapseExample_2">
+                        <div class="input-group d-inline-flex p-2 bd-highlight gap-2 col-5">
+                            <input type="text" name = "email" class="form-control" placeholder="Введите Email">
+                            <input name = "new_email" type="submit" value ="Сохранить" class="btn btn-primary"></input>
+                        </div>
+                        <hr>
+                    </div>			
+                    <div class="col p-2">Номер телефона</div>
+                    {%if res.phone_number == None%}
+                        <div style="color:#505050" class="col-4 p-2">Не указан</div>
+                    {%endif%}
+                    {%if res.phone_number != None%}
+                        <div class="col p-2">{{ res.phone_number }}</div>
+                    {%endif%}
+					<!-- <a class="btn btn-primary" data-bs-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Переключить первый элемент</a> -->
+                    <a href="#phone"  class="text-primary text-end col-4 p-2" data-bs-toggle="collapse" data-bs-target="#collapseExample_1" aria-expanded="false" aria-controls="collapseExample_1">Изменить</a>
+                    <hr>
+                    <div class="collapse" id="collapseExample_1">
+                        <div class="input-group d-inline-flex p-2 bd-highlight gap-2 col-5">
+                            <input type="text"  name = "phone_number" class="form-control" placeholder="Введите номер телефона">
+                            <input name = "new_number" type="submit" value ="Сохранить" class="btn btn-primary"></input>
+                        </div>
+                        <hr>
+                    </div>
+                    
+                    <div class="col p-2">Регион</div>
+                    {%if res.region == None%}
+                        <div style="color:#505050" class="col-4 p-2">Не указан</div>
+                    {%endif%}
+                    {%if res.region != None%}
+                        <div class="col p-2">{{ res.region }}</div>
+                    {%endif%}
+                    <a href="#region" class="text-primary text-end col p-2" type="submit" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Изменить</a>
+                    <hr>
+                    <div class="collapse" id="collapseExample">
+                        <div class="input-group d-inline-flex p-2 bd-highlight gap-2 col-5">
+							<input type="text"  name = "region" class="form-control" placeholder="Введите регион">
+                            <input name = "new_region" type="submit" value ="Сохранить" class="btn btn-primary"></input>
+                        </div>
+                    </div>
+					{%if session['role'] == 'employer'%}
+					<div class="col p-2">Адрес</div>
+					<div class="col p-2">{{ res.address }}</div>
+                    <a href="#address" class="text-primary text-end col p-2" type="submit" data-bs-toggle="collapse" data-bs-target="#collapseExample_5" aria-expanded="false" aria-controls="collapseExample_5">Изменить</a>
+                    <hr>
+                    <div class="collapse" id="collapseExample_5">
+                        <div class="input-group d-inline-flex p-2 bd-highlight gap-2 col-5">
+							<input type="text"  name = "address" class="form-control" placeholder="Введите адрес">
+                            <input name = "new_address" type="submit" value ="Сохранить" class="btn btn-primary"></input>
+                        </div>
+                    </div>
+					{%endif%}
+				{% endfor %}
+            </div>
+        </div>
+    </div>
+</form>
+</body>
+</html>
