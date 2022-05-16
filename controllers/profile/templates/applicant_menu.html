@@ -47,7 +47,7 @@
 						<a class="nav-link active" aria-current="page" href="/quiz" name="new_vacancy">Тесты</a>
 					</li>
 					
-					{%if session['role'] == 'admin' or session['role'] == 'employer' or session['role'] == 'client'%}
+					{%if session['role'] == 'admin' or session['role'] == 'employer'%}
 					<li class="nav-item">
 						<a class="nav-link active" aria-current="page" href="/response" name="new_vacancy">Отклики</a>
 					</li>
@@ -80,12 +80,12 @@
 								<li><a class="dropdown-item" href="/applicant">Мое резюме</a></li>
 							{%endif%}
 
-							{%if session['role'] == 'client'%}
-							<li><a class="dropdown-item" href="/applicant">Пройденные тесты</a></li>
-							{%endif%}
-
 							{%if session['role'] == 'admin' or session['role'] == 'employer'%}
 								<li><a class="dropdown-item" href="#">Тесты</a></li>
+							{%endif%}
+
+							{%if session['role'] == 'client'%}
+								<li><a class="dropdown-item" href="/user/notifications">Уведомления</a></li>
 							{%endif%}
 
 							<li><hr class="dropdown-divider"></li>
@@ -94,14 +94,8 @@
 					</li>
 					{%endif%}
 				</ul>
-		</nav>
-		<form method="POST">
-			<div class="d-flex mt-4 col-11 mx-auto" style="align-items: center;">
-				<input type="text" name = "search" class="form-control" placeholder="Поиск">
-				<input style="margin-left: 10px;" name = "search_button" type="submit" value ="Поиск" class="btn bg-dark text text-light"></input>
 			</div>
-		</div>
-		</form>
+		</nav>
 	</head>
 <!-- 
 	<nav class="navbar navbar-light bg-light">
@@ -111,67 +105,53 @@
 			<button class="btn btn-outline-success" type="submit">Search</button>
 		  </form>
 		</div>
-
-
-        <div class="row mt-5">
-          <div class="col">
-            <h1>Вход в систему</h1>
-          </div>
-        </div>
 	  </nav> -->
 
 <body>
-	<div>
-		<div class="container">
-			<div class="row ">
-				{% if name %} 
-				<div class="mt-5"><h2>Поиск по запросу: "{{ name }}"</h2></div>
-				{% endif %}
-				{%for res in result%}
-				<div class="col row mt-5 ps-5 ">
-					<a href="/posts/{{ res.id }}" style="text-decoration: none;">
-						<h2 style="color:#00c3ff" class="card-text">{{ res.name }}</h2>
-					</a>
-					{% if res.salary != 0 %} 
-					<h5 style="color:#566064" class="card-text">Зарплата: {{ res.salary }}</h5>
-					{% else  %}
-					<h5 style="color:#566064" class="card-text">Зарплата не указана </h5>
-					{% endif %}
-					<!-- <div class="text-wrap" style="width: 8rem;">
-						{{ res.company }}: {{ res.description }}
-					</div>	 -->
-					<a href="/employer_profile/{{ res.company }}" value="{{ res.company }}" style="color:#000000; text-decoration: none;" class="card-title text-break">{{ res.company }}: {{ res.description }}</a> 
-					<form method="POST">
-						<a href="/posts/{{ res.id }}" class="btn btn-primary" style="width: 275px" name="detail" value="{{ res.id }}">Подробнее</a>
-					</form>
-				</div>
-				{% endfor %}
-				<div class="mt-5">
-				<nav aria-label="Page navigation example">
-					<ul class="pagination">
-						<li class="page-item">
-						<a class="page-link" href="" aria-label="Previous">
-							<span aria-hidden="true">&laquo;</span>
-						</a>
-						</li>
-						<li class="page-item"><a class="page-link" href="/">1</a></li>
-						<li class="page-item"><a id="page" class="page-link" href="./?page=2">2</a></li>
-						<li class="page-item">
-						<a class="page-link" href="#" aria-label="Next">
-							<span aria-hidden="true">&raquo;</span>
-						</a>
-						</li>
-					</ul>
-					</nav>
-				</div>
+	<div class="container">
+        <!-- <a href="/resume" class="btn mt-4 btn-primary">Создать резюме</a> -->
+        <!-- <h2 class="text-start mt-4">Мои резюме</h2>   -->
+        <div class="row">
+            <div class="col">
+                <h2 class="text-start mt-4">Мои резюме</h2> 
+                <form method="post">
+                    <button name="create_resume" type="submit" class="btn mb-4 btn-outline-primary">Создать резюме</button>
+                </form>
+            </div>	
+        </div>
+        {%for res in result%}
+        <div class="row">
+		<a href="/resume/{{ res.resume_id }}" style="color:#00c3ff" class="fs-4 mt-4">{{ res.position_work }}</a>
+			<div class="row">
+				<div class="col">
+                    {%if res.specialization == None %}
+					Специализации не указаны
+                    {% else %}
+                    Специализации: {{ res.specialization }}
+                    {% endif %}
+				</div>	
 			</div>
-		</div>
-			<!-- <hr \> -->
-		</div>
-				
-
-	</div>
-
-
+			<div class="row">
+				<div class="col">
+                    {%if res.salary == None %}
+					Желаемая зарплата не указана
+                    {% else %}
+                    Желаемая зарплата {{ res.salary }} рублей
+                    {% endif %}
+				</div>	
+			</div>
+            <form method="post">
+            <div class="col">
+                {%if res.status == 0 %}
+                <button name = "active_resume" value = "{{ res.resume_id }}"  class="mt-1 btn btn-primary">Сделать видимым</button>
+                {% else %}
+                <button name = "deactivation_resume" value = "{{ res.resume_id }}" class="mt-1 btn btn-secondary">Отключить видимость</button>
+                {% endif %}
+                <button name = "delete_resume" value = "{{ res.resume_id }}" type = "submit" class="mt-1 btn btn-danger">Удалить</button>
+            </div>
+            </form>
+        </div>
+		{% endfor %}
+    </div>
 </body>
 </html>

@@ -1,23 +1,17 @@
 # from asyncio import constants
+from sre_constants import SUCCESS
 from flask import render_template, request, session, redirect, Blueprint, current_app, url_for
 from DBCM import UseDatabase
 # from ..auth import auth
 from functools import wraps
-from models import add_vacancy, posts, users, vacancy, employer
+from models import add_vacancy, posts, users, vacancy, employer, resume
 
 main_blueprint = Blueprint('main_blueprint', __name__, template_folder='templates')
 
 @main_blueprint.route('/', methods=['GET', 'POST'])
 def main():
-    # search = False
     page = request.args.get('page', 1, type = int)
     first_page = (page-1)*15
-    # if q:
-    #     search = True
-    # page = request.args.get(get_page_parameter(), type=int, default=1)
-
-    # users = User.find(...)
-    # pagination = Pagination(page=page, total=users.count(), search=search, record_name='users')
     if request.method == 'GET': 
         with UseDatabase(current_app.config['db']['postgres']) as cursor:
             cursor.execute("""
@@ -30,7 +24,6 @@ def main():
             result = []
             for con in cursor.fetchall():
                 result.append(dict(zip(schema, con)))
-            print(len(result))
             return render_template('main.html', result = result)
     if request.method == 'POST':
         if 'search_button' in request.form:
@@ -63,20 +56,26 @@ def button(id):
     if request.method == 'GET':
         model = posts.PostsModel('postgres')
         result = model.select_post(id)
-        # with UseDatabase(current_app.config['db']['postgres']) as cursor:
-        #     cursor.execute("""SELECT company, description, name, full_description, salary, email, address FROM vacancy WHERE id = %s""" % (id))
-        #     schema = ['company', 'description', 'name', 'full_description', 'salary', 'email', 'address']
-        #     result = []
-        #     for con in cursor.fetchall():
-        #         result.append(dict(zip(schema, con)))
+        if session:
+            if session['role'] == 'client':
+                user_id = session['user_id']
+                model = resume.ResumeModel('postgres')
+                user_resume = model.select_resume(user_id)
+                print (resume)
+                return render_template('detail.html', result = result, user_resume = user_resume)
+            return render_template('detail.html', result = result)
         return render_template('detail.html', result = result)
     if session:
         if request.method == 'POST':
-            if 'response_button' in request.form:
+            print ("post")
+            print (request.form)
+            if 'send_resume' in request.form:
                 model = posts.PostsModel('postgres')
                 user = session['user_id']
-                result = model.otclick(id, user)
-        return ('Ваше резюме успешно отправлено')
+                resume_id = request.form['resume_id']
+                model.otclick(id, user, resume_id)
+                result = model.select_post(id)
+            return render_template('detail.html', result = result, success=True)
     else:
         return ('Вам нужно зарегистрироваться')
 
@@ -89,25 +88,6 @@ def employer_profile(company):
             return render_template('employer_company_profle.html', result = result) 
         else:
             return render_template('employer_company_profle.html') 
-    
-    #     model = posts.PostsModel('postgres')
-    #     result = model.select_post(id)
-    #     # with UseDatabase(current_app.config['db']['postgres']) as cursor:
-    #     #     cursor.execute("""SELECT company, description, name, full_description, salary, email, address FROM vacancy WHERE id = %s""" % (id))
-    #     #     schema = ['company', 'description', 'name', 'full_description', 'salary', 'email', 'address']
-    #     #     result = []
-    #     #     for con in cursor.fetchall():
-    #     #         result.append(dict(zip(schema, con)))
-    #     return render_template('detail.html', result = result)
-    # if session:
-    #     if request.method == 'POST':
-    #         if 'response_button' in request.form:
-    #             model = posts.PostsModel('postgres')
-    #             user = session['user_id']
-    #             result = model.otclick(id, user)
-    #     return ('Ваше резюме успешно отправлено')
-    # else:
-    #     return ('Вам нужно зарегистрироваться')
 
 @main_blueprint.route('/new_vacancy', methods=['GET', 'POST'])
 def new_vacancy():
@@ -218,12 +198,4 @@ def profile():
             return "AAA?"
     else:
         return redirect(url_for('main_blueprint.main'))
-    # if 'phone_number_update' in request.form:
-    #     print ('Обновление номера')
-    #     print (request.form)
-    #     # else:
-    #     #     return "Что-то не так"
-    # else:
-    #     return "У вас нет профиля"
 
-# phone_number_update

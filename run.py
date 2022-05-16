@@ -18,6 +18,9 @@ app.register_blueprint(logout_blueprint, url_prefix='/logout')
 from controllers.main.main import main_blueprint
 app.register_blueprint(main_blueprint, url_prefix='/')
 
+from controllers.profile.profile import profile_blueprint
+app.register_blueprint(profile_blueprint, url_prefix='/')
+
 if __name__ == '__main__':
     app = configureApp(app)
     app.run (

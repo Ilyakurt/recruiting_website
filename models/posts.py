@@ -34,9 +34,9 @@ class PostsModel:
                 result.append(dict(zip(schema, con)))
         return result
 
-    def otclick(self, id, user):
+    def otclick(self, id, user, resume_id):
         with UseDatabase(current_app.config['db']['postgres']) as cursor:
-            cursor.execute("""INSERT INTO public.user_vacancy(id_vac, id_user) VALUES (%s, %s) RETURNING status""" % (id, user))
+            cursor.execute("""INSERT INTO user_vacancy(id_vac, id_user, resume_id) VALUES (%s, %s, %s) RETURNING status""" % (id, user, resume_id))
             res = str(cursor.fetchone())
         result = res[1:len(res) - 2]
         return result

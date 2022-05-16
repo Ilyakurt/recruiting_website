@@ -37,7 +37,7 @@
 				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
 					
-					{%if session['role'] == 'admin' or 'employer'%}
+					{%if session['role'] == 'admin' or session['role'] == 'employer'%}
 				  	<li class="nav-item">
 						<a class="nav-link active" aria-current="page" href="/new_vacancy" name="new_vacancy">Создание вакансии</a>
 					</li>
@@ -47,7 +47,7 @@
 						<a class="nav-link active" aria-current="page" href="/quiz" name="new_vacancy">Тесты</a>
 					</li>
 					
-					{%if session['role'] == 'admin' or 'employer'%}
+					{%if session['role'] == 'admin' or session['role'] == 'employer'%}
 					<li class="nav-item">
 						<a class="nav-link active" aria-current="page" href="/response" name="new_vacancy">Отклики</a>
 					</li>
@@ -67,15 +67,20 @@
 						<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 							<li><a class="dropdown-item" href="/profile">Личный кабинет</a></li>
 
-							{%if session['role'] == 'admin' or 'employer'%}
+							{%if session['role'] == 'admin' or session['role'] == 'employer'%}
+							<li><a class="dropdown-item" href="#">Профиль компании</a></li>
+							{%endif%}
+
+							{%if session['role'] == 'admin' or session['role'] == 'employer'%}
 								<li><a class="dropdown-item" href="/vacancy">Вакансии</a></li>
 							{%endif%}
 
+							
 							{%if session['role'] == 'client'%}
-								<li><a class="dropdown-item" href="/user/response">Мое резюме</a></li>
+								<li><a class="dropdown-item" href="/applicant">Мое резюме</a></li>
 							{%endif%}
 
-							{%if session['role'] == 'admin' or 'employer'%}
+							{%if session['role'] == 'admin' or session['role'] == 'employer'%}
 								<li><a class="dropdown-item" href="#">Тесты</a></li>
 							{%endif%}
 
@@ -101,7 +106,7 @@
 				{%if session['role'] == 'employer'%}
 				<h2>Профиль пользователя компании {{ result[0]['company'] }}</h2>
 				{%else%}
-				<h2>Профиль пользователя</h2>
+				<h2>Личная информация</h2>
 				{%endif%}
 		        {%for res in result%}
                     <div class="col p-2 mt-3">Имя</div>

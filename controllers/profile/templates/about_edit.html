@@ -37,7 +37,7 @@
 				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
 					
-					{%if session['role'] == 'admin' or session['role'] == 'employer'%}
+					{%if session['role'] == 'admin' or 'employer'%}
 				  	<li class="nav-item">
 						<a class="nav-link active" aria-current="page" href="/new_vacancy" name="new_vacancy">Создание вакансии</a>
 					</li>
@@ -47,7 +47,7 @@
 						<a class="nav-link active" aria-current="page" href="/quiz" name="new_vacancy">Тесты</a>
 					</li>
 					
-					{%if session['role'] == 'admin' or session['role'] == 'employer' or session['role'] == 'client'%}
+					{%if session['role'] == 'admin' or 'employer'%}
 					<li class="nav-item">
 						<a class="nav-link active" aria-current="page" href="/response" name="new_vacancy">Отклики</a>
 					</li>
@@ -67,25 +67,20 @@
 						<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 							<li><a class="dropdown-item" href="/profile">Личный кабинет</a></li>
 
-							{%if session['role'] == 'admin' or session['role'] == 'employer'%}
-							<li><a class="dropdown-item" href="#">Профиль компании</a></li>
-							{%endif%}
-
-							{%if session['role'] == 'admin' or session['role'] == 'employer'%}
+							{%if session['role'] == 'admin' or 'employer'%}
 								<li><a class="dropdown-item" href="/vacancy">Вакансии</a></li>
 							{%endif%}
 
-							
 							{%if session['role'] == 'client'%}
-								<li><a class="dropdown-item" href="/applicant">Мое резюме</a></li>
+								<li><a class="dropdown-item" href="/user/response">Мое резюме</a></li>
 							{%endif%}
 
-							{%if session['role'] == 'client'%}
-							<li><a class="dropdown-item" href="/applicant">Пройденные тесты</a></li>
-							{%endif%}
-
-							{%if session['role'] == 'admin' or session['role'] == 'employer'%}
+							{%if session['role'] == 'admin' or 'employer'%}
 								<li><a class="dropdown-item" href="#">Тесты</a></li>
+							{%endif%}
+
+							{%if session['role'] == 'client'%}
+								<li><a class="dropdown-item" href="/user/notifications">Уведомления</a></li>
 							{%endif%}
 
 							<li><hr class="dropdown-divider"></li>
@@ -94,14 +89,8 @@
 					</li>
 					{%endif%}
 				</ul>
-		</nav>
-		<form method="POST">
-			<div class="d-flex mt-4 col-11 mx-auto" style="align-items: center;">
-				<input type="text" name = "search" class="form-control" placeholder="Поиск">
-				<input style="margin-left: 10px;" name = "search_button" type="submit" value ="Поиск" class="btn bg-dark text text-light"></input>
 			</div>
-		</div>
-		</form>
+		</nav>
 	</head>
 <!-- 
 	<nav class="navbar navbar-light bg-light">
@@ -111,67 +100,27 @@
 			<button class="btn btn-outline-success" type="submit">Search</button>
 		  </form>
 		</div>
-
-
-        <div class="row mt-5">
-          <div class="col">
-            <h1>Вход в систему</h1>
-          </div>
-        </div>
 	  </nav> -->
 
 <body>
-	<div>
-		<div class="container">
-			<div class="row ">
-				{% if name %} 
-				<div class="mt-5"><h2>Поиск по запросу: "{{ name }}"</h2></div>
-				{% endif %}
-				{%for res in result%}
-				<div class="col row mt-5 ps-5 ">
-					<a href="/posts/{{ res.id }}" style="text-decoration: none;">
-						<h2 style="color:#00c3ff" class="card-text">{{ res.name }}</h2>
-					</a>
-					{% if res.salary != 0 %} 
-					<h5 style="color:#566064" class="card-text">Зарплата: {{ res.salary }}</h5>
-					{% else  %}
-					<h5 style="color:#566064" class="card-text">Зарплата не указана </h5>
-					{% endif %}
-					<!-- <div class="text-wrap" style="width: 8rem;">
-						{{ res.company }}: {{ res.description }}
-					</div>	 -->
-					<a href="/employer_profile/{{ res.company }}" value="{{ res.company }}" style="color:#000000; text-decoration: none;" class="card-title text-break">{{ res.company }}: {{ res.description }}</a> 
-					<form method="POST">
-						<a href="/posts/{{ res.id }}" class="btn btn-primary" style="width: 275px" name="detail" value="{{ res.id }}">Подробнее</a>
-					</form>
-				</div>
-				{% endfor %}
-				<div class="mt-5">
-				<nav aria-label="Page navigation example">
-					<ul class="pagination">
-						<li class="page-item">
-						<a class="page-link" href="" aria-label="Previous">
-							<span aria-hidden="true">&laquo;</span>
-						</a>
-						</li>
-						<li class="page-item"><a class="page-link" href="/">1</a></li>
-						<li class="page-item"><a id="page" class="page-link" href="./?page=2">2</a></li>
-						<li class="page-item">
-						<a class="page-link" href="#" aria-label="Next">
-							<span aria-hidden="true">&raquo;</span>
-						</a>
-						</li>
-					</ul>
-					</nav>
-				</div>
-			</div>
-		</div>
-			<!-- <hr \> -->
-		</div>
-				
-
-	</div>
-
-
+	<div class="container">
+        <div class="row mt-4">
+            <a style="width: 170px" href="/applicant" class="btn ms-2 mb-4 btn-outline-primary" >Обратно к резюме</a>
+        </div>
+    <h2 class="p-2 text-start">Редактирование информации о себе</h2>
+    {%for res in user_resume%}
+    <form method="post">
+        <div class="col mt-2">
+            <label for="validationDefault03" class="form-label">Информация о себе</label>
+            {%if res.about == None %}
+            <textarea type="text" name = "about" required id = "about" class="form-control" placeholder="О себе" style="height: 200px"></textarea>
+            {% else %}
+            <textarea type="text" name = "about" required id = "about" class="form-control" placeholder="О себе" style="height: 200px">{{ res.about }}</textarea>
+            {% endif %}
+        </div>
+        <button name = "save_button" type="submit" class="btn btn-primary mt-3">Сохранить</button>
+    </form>
+    {% endfor %}
+</div>
 </body>
 </html>

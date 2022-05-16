@@ -45,8 +45,11 @@ def authorization():
         if data['password'] == data['repeat_password']:
             role = 'client'
             exists, user_data = create_new_user(data, role)
+            print (exists, user_data)
             if not exists:
                 #logger.info(session['name'] + " создал нового пользователя")
+                model = users.UsersModel('postgres')
+                model.profile_create(user_data)
                 return render_template('auth.html', new_user_login=data['login'])
             else:
                 return render_template('user_create.html', user_data=user_data, already_exists=True)
@@ -61,6 +64,8 @@ def authorization():
             if not exists:
                 #logger.info(session['name'] + " создал нового пользователя")
                 create_new_employer(data, user_data)
+                model = users.UsersModel('postgres')
+                model.profile_create(user_data)
                 return render_template('auth.html', new_user_login=data['login'])
             else:
                 print (data)
