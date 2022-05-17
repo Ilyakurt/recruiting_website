@@ -47,7 +47,7 @@
 						<a class="nav-link active" aria-current="page" href="/quiz" name="new_vacancy">Тесты</a>
 					</li>
 					
-					{%if session['role'] == 'admin' or session['role'] == 'employer'%}
+					{%if session['role'] == 'admin' or session['role'] == 'employer' or session['role'] == 'client'%}
 					<li class="nav-item">
 						<a class="nav-link active" aria-current="page" href="/response" name="new_vacancy">Отклики</a>
 					</li>

@@ -24,6 +24,7 @@ def main():
             result = []
             for con in cursor.fetchall():
                 result.append(dict(zip(schema, con)))
+            print(result)
             return render_template('main.html', result = result)
     if request.method == 'POST':
         if 'search_button' in request.form:
@@ -117,9 +118,21 @@ def new_vacancy():
 
 @main_blueprint.route('/response')
 def response():
-    model = add_vacancy.Vacancy('postgres')
-    result_1 = model.select_response()
-    return render_template('response.html', result_1 = result_1)
+    if session:
+        user_id = session['user_id']
+        role = session['role']
+        if request.method == 'GET':
+            if role == 'employer' or 'admin':
+                model = add_vacancy.Vacancy('postgres')
+                result = model.select_response()
+                print (result)
+                return render_template('response.html', result = result)
+            if role == 'client':
+                model = resume.ResumeModel('postgres')
+                result = model.select_response(user_id)
+                print (result)
+                return render_template('user_otclick.html', result = result)
+    return redirect(url_for('main_blueprint.main'))
 
 @main_blueprint.route('/vacancy', methods=['GET', 'POST'])
 def profile_vacancy():

@@ -37,7 +37,7 @@
 				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
 					
-					{%if session['role'] == 'admin' or 'employer'%}
+					{%if session['role'] == 'admin' or session['role'] == 'employer'%}
 				  	<li class="nav-item">
 						<a class="nav-link active" aria-current="page" href="/new_vacancy" name="new_vacancy">Создание вакансии</a>
 					</li>
@@ -67,15 +67,20 @@
 						<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 							<li><a class="dropdown-item" href="/profile">Личный кабинет</a></li>
 
-							{%if session['role'] == 'admin' or 'employer'%}
+							{%if session['role'] == 'admin' or session['role'] == 'employer'%}
+							<li><a class="dropdown-item" href="#">Профиль компании</a></li>
+							{%endif%}
+
+							{%if session['role'] == 'admin' or session['role'] == 'employer'%}
 								<li><a class="dropdown-item" href="/vacancy">Вакансии</a></li>
 							{%endif%}
 
+							
 							{%if session['role'] == 'client'%}
-								<li><a class="dropdown-item" href="/user/response">Мое резюме</a></li>
+								<li><a class="dropdown-item" href="/applicant">Мое резюме</a></li>
 							{%endif%}
 
-							{%if session['role'] == 'admin' or 'employer'%}
+							{%if session['role'] == 'admin' or session['role'] == 'employer'%}
 								<li><a class="dropdown-item" href="#">Тесты</a></li>
 							{%endif%}
 
@@ -104,23 +109,67 @@
 
 <body>
 	<div class="container">
-        <div class="row mt-4">
-            <a style="width: 170px" href="/applicant" class="btn ms-2 mb-4 btn-outline-primary" >Обратно к резюме</a>
-        </div>
-    <h2 class="p-2 text-start">Редактирование информации о себе</h2>
-    {%for res in user_resume%}
-    <form method="post">
-        <div class="col mt-2">
-            <label for="validationDefault03" class="form-label">Информация о себе</label>
-            {%if res.about == None %}
-            <textarea type="text" name = "about" required id = "about" class="form-control" placeholder="О себе" style="height: 200px"></textarea>
-            {% else %}
-            <textarea type="text" name = "about" required id = "about" class="form-control" placeholder="О себе" style="height: 200px">{{ res.about }}</textarea>
-            {% endif %}
-        </div>
-        <button name = "save_button" type="submit" class="btn btn-primary mt-3">Сохранить</button>
-    </form>
-    {% endfor %}
-</div>
+        <!-- <a href="/resume" class="btn mt-4 btn-primary">Создать резюме</a> -->
+        <!-- <h2 class="text-start mt-4">Мои резюме</h2>   -->
+        <div class="row">
+            <div class="col">
+                <h2 class="text-start mt-4">Отклики и приглашения</h2> 
+            </div>	
+			<ul class="nav nav-tabs" id="myTab" role="tablist">
+				<li class="nav-item" role="presentation">
+				  <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Активные</button>
+				</li>
+				<li class="nav-item" role="presentation">
+				  <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Все отклики</button>
+				</li>
+			  </ul>
+			  <form method="post">
+				<div class="tab-content" id="myTabContent">
+					<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+						{%for res in result%}
+							{% if res.status == 1 %}
+							<div class="row">
+								<a href="/employer_profile/{{ res.company }}" style="text-decoration: none; color:#00c3ff" class="col mt-3 fs-4">
+									{{ res.company }}
+								</a>
+								<div class="row">
+									<div class="col">
+										Должность: {{ res.name }}
+									</div>
+								</div>
+								<div class="row">
+									<div class="col">
+										Зарплата: {{ res.salary }}
+									</div>
+								</div>
+							</div>
+							<a href="/posts/{{ res.id_vac }}" style="text-decoration: none;"name = "active_resume" value = "{{ res.resume_id }}"  class="mt-1 btn btn-secondary">Открыть вакансию</a>
+							{% endif %}
+						{% endfor %}
+					</div>
+					<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+						{%for res in result%}
+						<div class="row">
+							<div class="col mt-3 fs-4" style="color:#00c3ff">
+								{{ res.company }}
+							</div>
+							<div class="row">
+								<div class="col">
+									Должность: {{ res.name }}
+								</div>
+							</div>
+							<div class="row">
+								<div class="col">
+									Зарплата: {{ res.salary }}
+								</div>
+							</div>
+						</div>
+						<button name = "active_resume" value = "{{ res.resume_id }}"  class="mt-1 btn btn-secondary">Открыть вакансию</button>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</form>
+    </div>
 </body>
 </html>

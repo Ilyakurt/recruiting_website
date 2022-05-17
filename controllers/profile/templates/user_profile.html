@@ -4,7 +4,7 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Рекрутинг</title>
+		<title>Резюме</title>
 		<link
 			href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
 			rel="stylesheet"
@@ -37,7 +37,7 @@
 				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
 					
-					{%if session['role'] == 'admin' or 'employer'%}
+					{%if session['role'] == 'admin' or session['role'] == 'employer'%}
 				  	<li class="nav-item">
 						<a class="nav-link active" aria-current="page" href="/new_vacancy" name="new_vacancy">Создание вакансии</a>
 					</li>
@@ -47,7 +47,7 @@
 						<a class="nav-link active" aria-current="page" href="/quiz" name="new_vacancy">Тесты</a>
 					</li>
 					
-					{%if session['role'] == 'admin' or session['role'] == 'employer' or session['role'] == 'client'%}
+					{%if session['role'] == 'admin' or session['role'] == 'employer'%}
 					<li class="nav-item">
 						<a class="nav-link active" aria-current="page" href="/response" name="new_vacancy">Отклики</a>
 					</li>
@@ -67,15 +67,20 @@
 						<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 							<li><a class="dropdown-item" href="/profile">Личный кабинет</a></li>
 
-							{%if session['role'] == 'admin' or 'employer'%}
+							{%if session['role'] == 'admin' or session['role'] == 'employer'%}
+							<li><a class="dropdown-item" href="#">Профиль компании</a></li>
+							{%endif%}
+
+							{%if session['role'] == 'admin' or session['role'] == 'employer'%}
 								<li><a class="dropdown-item" href="/vacancy">Вакансии</a></li>
 							{%endif%}
 
+							
 							{%if session['role'] == 'client'%}
-								<li><a class="dropdown-item" href="/user/response">Мое резюме</a></li>
+								<li><a class="dropdown-item" href="/applicant">Мое резюме</a></li>
 							{%endif%}
 
-							{%if session['role'] == 'admin' or 'employer'%}
+							{%if session['role'] == 'admin' or session['role'] == 'employer'%}
 								<li><a class="dropdown-item" href="#">Тесты</a></li>
 							{%endif%}
 
@@ -104,23 +109,131 @@
 
 <body>
 	<div class="container">
-        <div class="row mt-4">
-            <a style="width: 170px" href="/applicant" class="btn ms-2 mb-4 btn-outline-primary" >Обратно к резюме</a>
-        </div>
-    <h2 class="p-2 text-start">Редактирование информации о себе</h2>
-    {%for res in user_resume%}
-    <form method="post">
-        <div class="col mt-2">
-            <label for="validationDefault03" class="form-label">Информация о себе</label>
-            {%if res.about == None %}
-            <textarea type="text" name = "about" required id = "about" class="form-control" placeholder="О себе" style="height: 200px"></textarea>
-            {% else %}
-            <textarea type="text" name = "about" required id = "about" class="form-control" placeholder="О себе" style="height: 200px">{{ res.about }}</textarea>
-            {% endif %}
-        </div>
-        <button name = "save_button" type="submit" class="btn btn-primary mt-3">Сохранить</button>
-    </form>
-    {% endfor %}
+		<div class="row mt-4">
+			<a style="width: 200px" href="/applicant" class="btn ms-2 mb-4 btn-outline-primary" >К списку резюме</a>
+		</div>
+		<!-- <h2 class="p-2 mt-4 text-start">Создание вакансии</h2> -->
+		{%for res in result%}
+			{%if res.last_name == None or res.name == None %}	
+			<p class="fs-4">Личные данные не указаны</p>
+			{% else %}
+			<p class="fs-4">{{ res.last_name }} {{ res.name }}</p>
+			{% endif %}
+			<div class="row">
+				<div class="col text-muted">
+					Контактная информация
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					{%if res.phone_number == None %}
+					Номер телефона не указан
+					{% else %}
+					Номер телефона: {{ res.phone_number }}
+					{% endif %}
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col">
+					{%if res.email == None %}
+					Почта не указана
+					{% else %}
+					Почта: {{ res.email }}
+					{% endif %}
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col">
+					{%if res.region == None %}
+					Регион не указан
+					{% else %}
+					Регион: {{ res.region }}
+					{% endif %}
+				</div>	
+			</div>
+		{% endfor %}
+		{%for res in user_resume%}
+		<p class="fs-4 text-muted mt-4">Должность</p>
+			<div class="row">
+				<div class="col">
+					Желаемая должность: {{ res.position_work }}
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col">
+					{%if res.specialization == None %}
+					Специализации не указаны
+					{% else %}
+					Специализации: {{ res.specialization }}
+					{% endif %}
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col">
+					{%if res.salary == None %}
+					Желаемая зарплата не указана
+					{% else %}
+					Желаемая зарплата {{ res.salary }} рублей
+					{% endif %}
+				</div>	
+			</div>
+		{% endfor %}
+		{%for res in user_resume_experience%}
+		<p class="fs-4 text-muted mt-4">Опыт работы</p>
+			{%if res.company == None %}
+			<div class="col ">
+				Не указан
+			</div>	
+			{% else %}
+			<div class="row ">
+				<div class="col ">
+					Компания: {{ res.company }}
+				</div>	
+			</div>
+			<div class="row ">
+				<div class="col ">
+					{{ res.region }}
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col">
+					{{ res.start_dttm[0:7] }} —
+					{% if res.end_dttm %}
+					{% if res.end_dttm[0:4] | int < 2055 %}
+					{{ res.end_dttm[0:7] }}
+					{% else %}
+					По настоящее время
+					{% endif %}
+					{% else %}
+					По настоящее время
+					{% endif %}
+				</div>	
+			</div>
+			<div class="row ">
+				<div class="col ">
+					Должность: {{ res.position_work }}
+				</div>	
+			</div>
+			<div class="row ">
+				<div class="col ">
+					Обязанности: {{ res.charge }}
+				</div>	
+			</div>
+			{% endif %}
+		{% endfor %}
+		{%for res in user_resume%}
+		<p class="fs-4 text-muted mt-4">Обо мне</p>
+			<div class="row">
+				<div class="col">
+					{%if res.about == None %}
+					Информация не указана
+					{% else %}
+					{{ res.about }}
+					{% endif %}
+				</div>	
+			</div>
+			<div class="mt-5"></div>
+		{% endfor %}
 </div>
 </body>
 </html>

@@ -13,17 +13,17 @@ def quiz():
 
 @quiz_blueprint.route('/list')
 def quiz_menu():
-    model = question.Quiz()
+    model = question.Quiz('postgres')
     result = model.get_subject()
     return render_template('quiz.html', result = result)
 
 @quiz_blueprint.route('/list/<int:qid>', methods=['GET', 'POST'])
 def quiz_button(qid):
     if request.method == 'GET':
-        model = question.Quiz()
+        model = question.Quiz('postgres')
         result = model.select_description(qid)
         return render_template('quiz_detail.html', result = result)
-    elif request.method == 'POST':
+    if request.method == 'POST':
         if session:
             if 'quiz' in request.form:
                 model = question.Quiz()
@@ -46,3 +46,68 @@ def quiz_button(qid):
                 return ('Тест завершен')
         else:
             return redirect(url_for('main_blueprint.main'))
+
+@quiz_blueprint.route('/create', methods=['GET', 'POST'])
+def quiz_create():
+    if session:
+        if request.method == 'GET':
+            user_id = session['user_id']
+            model = question.Quiz('postgres')
+            result = model.select_quiz(user_id)
+            print (result)
+            qid = result[0]['qid']
+            quiz_count = model.select_quiz_count(qid)
+            print ("quiz_count", quiz_count)
+            return render_template('create_quiz.html', result = result, quiz_count = quiz_count)
+        if request.method == 'POST':
+            if 'create_quiz' in request.form:
+                print ("POST")
+                user_id = session['user_id']
+                model = question.Quiz('postgres')
+                result = model.create_quiz(user_id)
+                return redirect(url_for('quiz_blueprint.quiz_create'))
+    else:
+        return redirect(url_for('quiz_blueprint.quiz'))
+
+@quiz_blueprint.route('/edit/<int:qid>', methods=['GET', 'POST'])
+def quiz_edit(qid, data_1 = []):
+    if session:
+        if request.method == 'GET':
+            user_id = session['user_id']
+            model = question.Quiz('postgres')
+            result = model.select_quiz_edit(user_id, qid)
+            print (result)
+            return render_template('quiz_edit.html', result = result, data_1 = data_1)
+        if request.method == 'POST':
+            if 'question_add' in request.form:
+                data = dict(request.form)
+                print (data)
+                data_1.append(data)
+                user_id = session['user_id']
+                model = question.Quiz('postgres')
+                result = model.select_quiz_edit(user_id, qid)
+                print (data_1)
+                return redirect(url_for('quiz_blueprint.quiz_edit', qid = qid, data_1 = data_1))
+                # return redirect(url_for('profile_blueprint.resume_create', resume_id = resume_id))
+                # return render_template('quiz_edit.html', result = result, data_1 = data_1)
+            # render_template('quiz_edit.html', result = result, data_1 = data_1)
+        #     if 'create_quiz' in request.form:
+        #         print ("POST")
+        #         user_id = session['user_id']
+        #         model = question.Quiz('postgres')
+        #         result = model.create_quiz(user_id)
+        #         return redirect(url_for('quiz_blueprint.quiz_create'))
+            else:
+                return redirect(url_for('quiz_blueprint.quiz'))
+        else:
+            return redirect(url_for('quiz_blueprint.quiz'))
+    else:
+        return redirect(url_for('quiz_blueprint.quiz'))
+
+def func(c):
+    try:
+        b = dict([input().split()])
+        c.append(b)
+        return func(c)
+    except:
+        pass
