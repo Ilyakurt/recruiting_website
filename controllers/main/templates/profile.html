@@ -19,6 +19,18 @@
                     {%if res.name != None%}
                         <div class="col p-2 mt-3">{{ res.name }}</div>
                     {%endif%}
+					{%if success == 'name_is_null' %}
+					<a href="#name" class="text-primary text-end col-4 p-2 mt-3" data-bs-toggle="collapse" data-bs-target="#collapseExample_3" aria-expanded="true" aria-controls="collapseExample_3">Изменить</a>
+                    <hr>
+                    <div class="collapse show" id="collapseExample_3">
+                        <div class="input-group d-inline-flex p-2 bd-highlight gap-2 col-5">
+                            <input type="text" name = "name"  class="form-control" placeholder="Введите Имя">
+                            <input name = "new_name" type="submit" value ="Сохранить" class="btn btn-primary"></input>
+                        </div>
+						<p class = "ms-3" style = "color: red;">Для сохранения введите имя</p>
+                        <hr>
+                    </div>
+					{% else %}
                     <a href="#name" class="text-primary text-end col-4 p-2 mt-3" data-bs-toggle="collapse" data-bs-target="#collapseExample_3" aria-expanded="false" aria-controls="collapseExample_3">Изменить</a>
                     <hr>
                     <div class="collapse" id="collapseExample_3">
@@ -28,6 +40,7 @@
                         </div>
                         <hr>
                     </div>
+					{%endif%}
 					<div class="col p-2">Фамилия</div>
                     {%if res.last_name == None%}
                         <div style="color:#505050" class="col-4 p-2">Не указана</div>
@@ -35,6 +48,18 @@
                     {%if res.last_name != None%}
                         <div class="col p-2">{{ res.last_name }}</div>
                     {%endif%}
+					{%if success == 'last_name_is_null' %}
+					<a href="#name"  class="text-primary text-end col-4 p-2" data-bs-toggle="collapse" data-bs-target="#collapseExample_4" aria-expanded="true" aria-controls="collapseExample_4">Изменить</a>
+                    <hr>
+                    <div class="collapse show" id="collapseExample_4">
+                        <div class="input-group d-inline-flex p-2 bd-highlight gap-2 col-5">
+                            <input type="text" name = "last_name" class="form-control" placeholder="Введите Фамилию">
+                            <input name = "new_last_name" type="submit" value ="Сохранить" class="btn btn-primary"></input>
+                        </div>
+						<p class = "ms-3" style = "color: red;">Для сохранения введите фамилию</p>
+                        <hr>
+                    </div>
+					{%else%}
                     <a href="#name"  class="text-primary text-end col-4 p-2" data-bs-toggle="collapse" data-bs-target="#collapseExample_4" aria-expanded="false" aria-controls="collapseExample_4">Изменить</a>
                     <hr>
                     <div class="collapse" id="collapseExample_4">
@@ -44,6 +69,7 @@
                         </div>
                         <hr>
                     </div>
+					{%endif%}
                     <div class="col p-2">Email</div>
                     {%if res.email == None%}
                         <div style="color:#505050" class="col-4 p-2">Не указан</div>
@@ -51,7 +77,30 @@
                     {%if res.email != None%}
                         <div class="col p-2">{{ res.email }}</div>
                     {%endif%}
-                    <a href="#email"  class="text-primary text-end col-4 p-2" data-bs-toggle="collapse" data-bs-target="#collapseExample_2" aria-expanded="false" aria-controls="collapseExample_2">Изменить</a>
+					{%if success == 'email_is_null' %}
+                    <a href="#email"  class="text-primary text-end col-4 p-2" data-bs-toggle="collapse" data-bs-target="#collapseExample_2" aria-expanded="true" aria-controls="collapseExample_2">Изменить</a>
+                    <hr>
+                    <div class="collapse show" id="collapseExample_2">
+                        <div class="input-group d-inline-flex p-2 bd-highlight gap-2 col-5">
+                            <input type="text" name = "email" class="form-control" placeholder="Введите Email">
+                            <input name = "new_email" type="submit" value ="Сохранить" class="btn btn-primary"></input>
+                        </div>
+						<p class = "ms-3" style = "color: red;">Для сохранения введите email</p>
+                        <hr>
+                    </div>
+					{% elif success == 'email_error' %}
+					<a href="#email"  class="text-primary text-end col-4 p-2" data-bs-toggle="collapse" data-bs-target="#collapseExample_2" aria-expanded="true" aria-controls="collapseExample_2">Изменить</a>
+                    <hr>
+                    <div class="collapse show" id="collapseExample_2">
+                        <div class="input-group d-inline-flex p-2 bd-highlight gap-2 col-5">
+                            <input type="text" name = "email" class="form-control" placeholder="Введите Email">
+                            <input name = "new_email" type="submit" value ="Сохранить" class="btn btn-primary"></input>
+                        </div>
+						<p class = "ms-3" style = "color: red;">email введен неверно</p>
+                        <hr>
+                    </div>
+					{%else%}
+					<a href="#email"  class="text-primary text-end col-4 p-2" data-bs-toggle="collapse" data-bs-target="#collapseExample_2" aria-expanded="false" aria-controls="collapseExample_2">Изменить</a>
                     <hr>
                     <div class="collapse" id="collapseExample_2">
                         <div class="input-group d-inline-flex p-2 bd-highlight gap-2 col-5">
@@ -59,15 +108,39 @@
                             <input name = "new_email" type="submit" value ="Сохранить" class="btn btn-primary"></input>
                         </div>
                         <hr>
-                    </div>			
+                    </div>	
+					{%endif%}
                     <div class="col p-2">Номер телефона</div>
                     {%if res.phone_number == None%}
                         <div style="color:#505050" class="col-4 p-2">Не указан</div>
                     {%endif%}
+
                     {%if res.phone_number != None%}
                         <div class="col p-2">{{ res.phone_number }}</div>
                     {%endif%}
-					<!-- <a class="btn btn-primary" data-bs-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Переключить первый элемент</a> -->
+					{% if success == 'phone_is_null' %}
+					<a href="#phone"  class="text-primary text-end col-4 p-2" data-bs-toggle="collapse" data-bs-target="#collapseExample_1" aria-expanded="True" aria-controls="collapseExample_1">Изменить</a>
+                    <hr>
+                    <div class="collapse show" id="collapseExample_1">
+                        <div class="input-group d-inline-flex p-2 bd-highlight gap-2 col-5">
+                            <input type="text"  name = "phone_number" class="form-control" placeholder="Введите номер телефона">
+                            <input name = "new_number" type="submit" value ="Сохранить" class="btn btn-primary"></input>
+                        </div>
+						<p class = "ms-3" style = "color: red;">Для сохранения введите номер</p>
+                        <hr>
+                    </div>
+					{% elif success == 'phone_is_not_int' %}
+					<a href="#phone"  class="text-primary text-end col-4 p-2" data-bs-toggle="collapse" data-bs-target="#collapseExample_1" aria-expanded="True" aria-controls="collapseExample_1">Изменить</a>
+                    <hr>
+                    <div class="collapse show" id="collapseExample_1">
+                        <div class="input-group d-inline-flex p-2 bd-highlight gap-2 col-5">
+                            <input type="text"  name = "phone_number" class="form-control" placeholder="Введите номер телефона">
+                            <input name = "new_number" type="submit" value ="Сохранить" class="btn btn-primary"></input>
+                        </div>
+						<p class = "ms-3" style = "color: red;">В номере присутствуют недопустимые символы</p>
+                        <hr>
+                    </div>
+					{% else %}
                     <a href="#phone"  class="text-primary text-end col-4 p-2" data-bs-toggle="collapse" data-bs-target="#collapseExample_1" aria-expanded="false" aria-controls="collapseExample_1">Изменить</a>
                     <hr>
                     <div class="collapse" id="collapseExample_1">
@@ -77,7 +150,8 @@
                         </div>
                         <hr>
                     </div>
-                    
+                    {%endif%}
+
                     <div class="col p-2">Регион</div>
                     {%if res.region == None%}
                         <div style="color:#505050" class="col-4 p-2">Не указан</div>
@@ -85,14 +159,29 @@
                     {%if res.region != None%}
                         <div class="col p-2">{{ res.region }}</div>
                     {%endif%}
-                    <a href="#region" class="text-primary text-end col p-2" type="submit" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Изменить</a>
+
+					{% if success == 'region_is_null' %}
+                    <a href="#region" class="text-primary text-end col p-2" type="submit" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="true" aria-controls="collapseExample">Изменить</a>
+                    <hr>
+                    <div class="collapse show" id="collapseExample">
+                        <div class="input-group d-inline-flex p-2 bd-highlight gap-2 col-5">
+							<input type="text"  name = "region" class="form-control" placeholder="Введите регион">
+                            <input name = "new_region" type="submit" value ="Сохранить" class="btn btn-primary"></input>
+                        </div>
+						<p class = "ms-3" style = "color: red;">В номере присутствуют недопустимые символы</p>
+                    </div>
+					{% else %}
+					<a href="#region" class="text-primary text-end col p-2" type="submit" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Изменить</a>
                     <hr>
                     <div class="collapse" id="collapseExample">
                         <div class="input-group d-inline-flex p-2 bd-highlight gap-2 col-5">
 							<input type="text"  name = "region" class="form-control" placeholder="Введите регион">
                             <input name = "new_region" type="submit" value ="Сохранить" class="btn btn-primary"></input>
                         </div>
+						
                     </div>
+					{%endif%}
+
 					{%if session['role'] == 'employer'%}
 					<div class="col p-2">Адрес</div>
 					<div class="col p-2">{{ res.address }}</div>

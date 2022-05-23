@@ -1,4 +1,4 @@
-from flask import render_template, request, session, redirect, Blueprint, current_app, url_for
+from flask import render_template, request, session, redirect, Blueprint, current_app, url_for, abort
 from DBCM import UseDatabase
 from models import add_vacancy, posts, users, vacancy, employer, resume
 
@@ -105,9 +105,9 @@ def new_vacancy():
                 return render_template('vacancy.html', success = True)
             return render_template('vacancy.html')
         else:
-            return "Нет доступа"
+            return render_template('error_url.html')
     else:
-        return "Нет доступа"
+        return render_template('error_url.html')
 
 @main_blueprint.route('/response')
 def response():
@@ -153,17 +153,18 @@ def profile_vacancy():
 def profile():
     if session:
         if request.method == 'GET':
+            success = request.args.get('success', 'True')
+            print (success)
             if session['role'] == 'client':
                 user = session['user_id']
-                print(user)
                 model = users.UsersModel('postgres')
                 result = model.profile(user)
                 if len(result) == 0:
                     user_id = model.profile_create(user)
                     result = model.profile(user_id)
-                    return render_template('profile.html', result = result)
+                    return render_template('profile.html', result = result, success = success)
                 else:
-                    return render_template('profile.html', result = result)
+                    return render_template('profile.html', result = result, success = success)
             else:
                 user = session['user_id']
                 model = users.UsersModel('postgres')
@@ -173,30 +174,49 @@ def profile():
         if request.method == 'POST':
             if 'new_number' in request.form:
                 phone_number = request.form['phone_number']
-                user_id = session['user_id']
-                model = users.UsersModel('postgres')
-                result = model.phone_number_update(phone_number, user_id)
-                return redirect(url_for('main_blueprint.profile'))
+                if len(phone_number) == 0:
+                    return redirect(url_for('main_blueprint.profile', success = 'phone_is_null'))
+                else:
+                    try:
+                        int(phone_number)
+                    except:
+                        return redirect(url_for('main_blueprint.profile', success = 'phone_is_not_int'))
+                    user_id = session['user_id']
+                    model = users.UsersModel('postgres')
+                    result = model.phone_number_update(phone_number, user_id)
+                    return redirect(url_for('main_blueprint.profile'))
             if 'new_region' in request.form:
                 region = request.form['region']
+                if len(region) == 0:
+                    return redirect(url_for('main_blueprint.profile', success = 'region_is_null'))
                 user_id = session['user_id']
                 model = users.UsersModel('postgres')
                 result = model.region_update(region, user_id)
                 return redirect(url_for('main_blueprint.profile'))
             if 'new_email' in request.form:
                 email = request.form['email']
+                if len(email) == 0:
+                    return redirect(url_for('main_blueprint.profile', success = 'email_is_null'))
+                try:
+                    email.index('@')
+                except:
+                    return redirect(url_for('main_blueprint.profile', success = 'email_error'))
                 user_id = session['user_id']
                 model = users.UsersModel('postgres')
                 result = model.email_update(email, user_id)
                 return redirect(url_for('main_blueprint.profile'))
             if 'new_name' in request.form:
                 name = request.form['name']
+                if len(name) == 0:
+                    return redirect(url_for('main_blueprint.profile', success = 'name_is_null'))                
                 user_id = session['user_id']
                 model = users.UsersModel('postgres')
                 result = model.name_update(name, user_id)
-                return redirect(url_for('main_blueprint.profile'))
+                return redirect(url_for('main_blueprint.profile'))         
             if 'new_last_name' in request.form:
                 last_name = request.form['last_name']
+                if len(last_name) == 0:
+                    return redirect(url_for('main_blueprint.profile', success = 'last_name_is_null')) 
                 user_id = session['user_id']
                 model = users.UsersModel('postgres')
                 result = model.last_name_update(last_name, user_id)
