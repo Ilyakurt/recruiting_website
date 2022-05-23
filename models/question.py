@@ -5,9 +5,7 @@ from DBCM import UseDatabase
 class Quiz:
     def __init__(self, role):
         self.permission = role
-        print ('role is', role)
-
-    # добавление пользователя (если успешно, то возвращает id нового пользователя, иначе - None)
+        
     def get_subject(self):
             with UseDatabase(current_app.config['db']['client']) as cursor:
                 cursor.execute("""
