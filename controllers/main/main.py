@@ -1,9 +1,5 @@
-# from asyncio import constants
-from sre_constants import SUCCESS
 from flask import render_template, request, session, redirect, Blueprint, current_app, url_for
 from DBCM import UseDatabase
-# from ..auth import auth
-from functools import wraps
 from models import add_vacancy, posts, users, vacancy, employer, resume
 
 main_blueprint = Blueprint('main_blueprint', __name__, template_folder='templates')
@@ -11,46 +7,46 @@ main_blueprint = Blueprint('main_blueprint', __name__, template_folder='template
 @main_blueprint.route('/', methods=['GET', 'POST'])
 def main():
     page = request.args.get('page', 1, type = int)
-    first_page = (page-1)*15
-    if request.method == 'GET': 
-        with UseDatabase(current_app.config['db']['postgres']) as cursor:
-            cursor.execute("""
-                SELECT company, description, salary, name, id 
-                FROM vacancy
-                LIMIT 15
-                OFFSET %s
-                """ % (first_page))
-            schema = ['company', 'description', 'salary', 'name', 'id']
-            result = []
-            for con in cursor.fetchall():
-                result.append(dict(zip(schema, con)))
-            print(result)
-            return render_template('main.html', result = result)
+    num_page = (page - 1) * 15
+    if request.method == 'GET':
+        model = posts.PostsModel('postgres')
+        page_paginate = int(model.count_vacancy()) // 15 + 1
+        result = model.select_vacancy(num_page)
+        return render_template('main.html', result = result, page_paginate = page_paginate)
     if request.method == 'POST':
         if 'search_button' in request.form:
             name = request.form['search']
-            model = posts.PostsModel('postgres')
-            result = model.search_vacancy(name)
-            return render_template('main.html', result = result, name = name)
-        else:
-            return ("X")
-    else:
-        redirect(url_for('main_blueprint.main'))
+            return redirect(url_for('main_blueprint.search_vacancy', search = name))
 
-@main_blueprint.route('/page=2', methods=['GET', 'POST'])
-def pagination():
+@main_blueprint.route('/search/<search>', methods=['GET', 'POST'])
+def search_vacancy(search):
     if request.method == 'GET':
-        with UseDatabase(current_app.config['db']['postgres']) as cursor:
-            cursor.execute("""SELECT company, description, salary, name, id 
-            FROM vacancy
-            LIMIT 15
-            OFFSET 0
-            """)
-            schema = ['company', 'description', 'salary', 'name', 'id']
-            result = []
-            for con in cursor.fetchall():
-                result.append(dict(zip(schema, con)))
-            return render_template('main.html', result = result)
+        name = search
+        vacancy_model = posts.PostsModel('postgres')
+        page = request.args.get('page', 1, type = int)
+        num_page = (page - 1) * 15
+        try:
+            vacancy_count = int(vacancy_model.count_search_vacancy(name))
+        except:
+            return redirect(url_for('main_blueprint.main'))
+        if vacancy_count > 0 and vacancy_count < 16:
+            model = posts.PostsModel('postgres')
+            result = model.search_vacancy(name, num_page)
+            return render_template('main.html', result = result, name = name, page_paginate = 0)
+        if vacancy_count > 15:
+            model = posts.PostsModel('postgres')
+            result = model.search_vacancy(name, num_page)
+            return render_template('main.html', result = result, name = name, page_paginate = 0)
+        else:
+            return render_template('main.html', name = name, page_paginate = 0, search_count = 0)  
+    if request.method == 'POST':
+        if 'search_button' in request.form:
+            name = request.form['search']
+            return redirect(url_for('main_blueprint.search_vacancy', search = name))
+        else:
+            return redirect(url_for('main_blueprint.main'))
+    else:
+        return redirect(url_for('main_blueprint.main'))
 
 @main_blueprint.route('/posts/<int:id>', methods=['GET', 'POST'])
 def button(id):
@@ -68,8 +64,6 @@ def button(id):
         return render_template('detail.html', result = result)
     if session:
         if request.method == 'POST':
-            print ("post")
-            print (request.form)
             if 'send_resume' in request.form:
                 model = posts.PostsModel('postgres')
                 user = session['user_id']
@@ -92,7 +86,6 @@ def employer_profile(company):
 
 @main_blueprint.route('/new_vacancy', methods=['GET', 'POST'])
 def new_vacancy():
-    print (session)
     if session:
         if session['role'] == 'admin':
             if 'add_button' in request.form:
@@ -119,18 +112,19 @@ def new_vacancy():
 @main_blueprint.route('/response')
 def response():
     if session:
+        print (session)
         user_id = session['user_id']
         role = session['role']
         if request.method == 'GET':
-            if role == 'employer' or 'admin':
+            if role == 'employer' or role == 'admin':
+                print ("1")
                 model = add_vacancy.Vacancy('postgres')
                 result = model.select_response()
-                print (result)
                 return render_template('response.html', result = result)
             if role == 'client':
+                print ("2")
                 model = resume.ResumeModel('postgres')
                 result = model.select_response(user_id)
-                print (result)
                 return render_template('user_otclick.html', result = result)
     return redirect(url_for('main_blueprint.main'))
 

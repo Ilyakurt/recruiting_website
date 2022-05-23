@@ -26,11 +26,11 @@ def quiz_button(qid):
     if request.method == 'POST':
         if session:
             if 'quiz' in request.form:
-                model = question.Quiz()
+                model = question.Quiz('postgres')
                 result = model.quiz_question(qid)
                 return render_template('quiz_test.html', result = result)
             if 'quiz_end' in request.form:
-                model = question.Quiz()
+                model = question.Quiz('postgres')
                 # result = model.quiz_id(qid)
                 data = request.form.to_dict()
                 del data['quiz_end']
@@ -40,7 +40,7 @@ def quiz_button(qid):
                 #     answer = request.form[val1]
                 #     print (answer)
                 for question_id, answer in data.items():
-                    model = question.Quiz()
+                    model = question.Quiz('postgres')
                     result = model.user_result_insert(qid, question_id, answer, 1, session['user_id'])
 
                 return ('Тест завершен')
@@ -54,11 +54,15 @@ def quiz_create():
             user_id = session['user_id']
             model = question.Quiz('postgres')
             result = model.select_quiz(user_id)
-            print (result)
-            qid = result[0]['qid']
-            quiz_count = model.select_quiz_count(qid)
-            print ("quiz_count", quiz_count)
-            return render_template('create_quiz.html', result = result, quiz_count = quiz_count)
+            len_res = len(result)
+            if len_res > 0:
+                for i in range (len_res):
+                    qid = result[i]['qid']
+                    quiz_count = model.select_quiz_count(qid)
+                    result[i]['count']  = quiz_count
+            else:
+                quiz_count = 0
+            return render_template('create_quiz.html', result = result)
         if request.method == 'POST':
             if 'create_quiz' in request.form:
                 print ("POST")
@@ -76,38 +80,38 @@ def quiz_edit(qid, data_1 = []):
             user_id = session['user_id']
             model = question.Quiz('postgres')
             result = model.select_quiz_edit(user_id, qid)
-            print (result)
-            return render_template('quiz_edit.html', result = result, data_1 = data_1)
+            lens = len(data_1)
+            if lens > 0:
+                if data_1[lens - 1]['qid'] == qid:
+                    return render_template('quiz_edit.html', result = result, data_1 = data_1)
+                else:
+                    data_1.clear()
+                    return render_template('quiz_edit.html', result = result, data_1 = data_1)
+            else:
+                return render_template('quiz_edit.html', result = result, data_1 = data_1)
         if request.method == 'POST':
             if 'question_add' in request.form:
-                data = dict(request.form)
-                print (data)
+                data = dict(request.form)                
                 data_1.append(data)
                 user_id = session['user_id']
                 model = question.Quiz('postgres')
                 result = model.select_quiz_edit(user_id, qid)
-                print (data_1)
-                return redirect(url_for('quiz_blueprint.quiz_edit', qid = qid, data_1 = data_1))
-                # return redirect(url_for('profile_blueprint.resume_create', resume_id = resume_id))
-                # return render_template('quiz_edit.html', result = result, data_1 = data_1)
-            # render_template('quiz_edit.html', result = result, data_1 = data_1)
-        #     if 'create_quiz' in request.form:
-        #         print ("POST")
-        #         user_id = session['user_id']
-        #         model = question.Quiz('postgres')
-        #         result = model.create_quiz(user_id)
-        #         return redirect(url_for('quiz_blueprint.quiz_create'))
+                len_data = len(data_1)
+                data_1[len_data - 1]['question_num'] = len_data
+                data_1[len_data - 1]['qid'] = qid
+                return redirect(url_for('quiz_blueprint.quiz_edit', qid = qid,  data_1 = data_1))
+            if 'delete_question' in request.form:
+                len_data = len(data_1)
+                del_data = int(request.form['delete_question'])
+                del data_1[del_data - 1]
+                for i in range (del_data - 1, len_data - 1):
+                    data_1[i]['question_num'] = i + 1
+                return redirect(url_for('quiz_blueprint.quiz_edit', qid = qid,  data_1 = data_1))
             else:
+                print (request.form)
                 return redirect(url_for('quiz_blueprint.quiz'))
+                
         else:
             return redirect(url_for('quiz_blueprint.quiz'))
     else:
-        return redirect(url_for('quiz_blueprint.quiz'))
-
-def func(c):
-    try:
-        b = dict([input().split()])
-        c.append(b)
-        return func(c)
-    except:
-        pass
+        return redirect(url_for('quiz_blueprint.quiz')) 

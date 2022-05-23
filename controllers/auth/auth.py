@@ -16,15 +16,18 @@ def authorization():
         login = request.form.get('login')
         password = request.form.get('password')
         if login and password:
-            with UseDatabase(current_app.config['db']['postgres']) as cursor:
-                cursor.execute ("""
-                    SELECT role, user_id, comp_name
-                    FROM users
-                    WHERE login='%s' AND password='%s'
-                    """ % (login, password))
-                schema = ['role', 'user_id', 'comp_name']
-                for con in cursor.fetchall():
-                    result.append(dict(zip(schema, con)))
+            try:
+                with UseDatabase(current_app.config['db']['postgres']) as cursor:
+                    cursor.execute ("""
+                        SELECT role, user_id, comp_name
+                        FROM users
+                        WHERE login='%s' AND password='%s'
+                        """ % (login, password))
+                    schema = ['role', 'user_id', 'comp_name']
+                    for con in cursor.fetchall():
+                        result.append(dict(zip(schema, con)))
+            except:
+                return redirect(url_for('auth_blueprint.authorization'))
             if len(result) > 0:
                 session['role'] = result[0]['role']
                 session['user_id'] = result[0]['user_id']
