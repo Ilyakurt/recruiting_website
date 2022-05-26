@@ -115,3 +115,13 @@ def quiz_edit(qid, data_1 = []):
             return redirect(url_for('quiz_blueprint.quiz'))
     else:
         return redirect(url_for('quiz_blueprint.quiz')) 
+
+@quiz_blueprint.route('/quiz/pass', methods=['GET', 'POST'])
+def quiz_user_pass(qid,):
+    if session:
+        if request.method == 'GET':
+            user_id = session['user_id']
+            model = question.Quiz('postgres')
+            result = model.quiz_pass(user_id, qid)
+    else:
+        return render_template('error_url.html')
