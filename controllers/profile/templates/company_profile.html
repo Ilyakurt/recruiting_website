@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title%}Профиль компании{% endblock %}
+{% block content %}
+<head>
+    <title>Bootstrap WYSIWYG Editor</title>
+    <meta charset="utf-8" />
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+    <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div class="container">
+        <form method="POST">
+            {%for res in result%}
+                <div class="row mt-4">
+                    <div class="col">
+                        <h2 class="card-title">{{ res.company }}</h2>
+                        <button name="description" type="submit" class="btn mb-4 btn-outline-primary">Редактировать описание</button>
+                        {% if edit == True %}
+                        {% elif res.description %}
+                        <p class="card-text text-break">{{ res.description | safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+            {% if edit == True %}
+            <div class="row mt-2">
+                <div class="col">
+                    <label class="form-label fs-5">Редактирование описания</label>
+                    <textarea type="text" name = "edit_description" required id="editor" class="form-control" placeholder="Описание" style="height: 200px">{{ result[0]['description'] }} </textarea>
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            $("#editor").editor({
+                                uiLibrary: 'bootstrap'
+                            });
+                        });
+                    </script>
+                    <button name="save_button" type="submit" class="btn mt-3 btn-success">Сохранить</button>
+                    <a href = "/company_profile" name="description" type="submit" class="btn mt-3 btn-secondary">Отмена</a>
+                </div>
+            </div>
+            {% endif %}
+        </form>
+        
+    </div>
+</body>
+{% endblock %}

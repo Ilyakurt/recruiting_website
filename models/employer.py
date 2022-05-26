@@ -11,8 +11,9 @@ class EmployerModel:
         with UseDatabase(current_app.config['db'][self.permission]) as cursor:
             cursor.execute("""
                 SELECT company, description
-                FROM company_profile
+                FROM company
                 WHERE company = '%s'
+                    AND status != 0
                 """ % (company))
             schema = ['company', 'description']
             result = []

@@ -87,21 +87,23 @@ def employer_profile(company):
 @main_blueprint.route('/new_vacancy', methods=['GET', 'POST'])
 def new_vacancy():
     if session:
-        if session['role'] == 'admin':
+        if session['role'] == 'employer':
             if 'add_button' in request.form:
-                company = session['comp_name']
-                description = 'Краткое описание отсутствует'
+                company = session['company']
+                description = request.form['small_description']
                 name = request.form['name']
                 full_description = request.form['full_description']
                 email = request.form['email']
                 address = request.form['address']
+                user_id = session['user_id']
+                status = 1
                 if (request.form['salary']):
                     salary = request.form['salary']
                 else:
                     salary = 0
                 with UseDatabase(current_app.config['db']['postgres']) as cursor:
-                    cursor.execute("""INSERT INTO vacancy(company, description, name, full_description, salary, email, address)
-                    VALUES ('%s', '%s', '%s', '%s', %s, '%s', '%s')""" % (company, description, name, full_description, salary, email, address) )
+                    cursor.execute("""INSERT INTO vacancy(company, description, name, full_description, salary, email, address, id_user, status)
+                    VALUES ('%s', '%s', '%s', '%s', %s, '%s', '%s', '%s', '%s')""" % (company, description, name, full_description, salary, email, address, user_id, status))
                 return render_template('vacancy.html', success = True)
             return render_template('vacancy.html')
         else:
@@ -146,6 +148,40 @@ def profile_vacancy():
                 result = model.user_vacancy_status_salary_update(vac_id, vac_status, vac_salary)
                 print ("data is is", data)
                 return redirect(url_for('main_blueprint.profile_vacancy'))
+            if 'change_description' in request.form:
+                vac_id = request.form['id']
+                user_id = session['user_id']
+                print ("111111111", vac_id, user_id)
+                return redirect(url_for('main_blueprint.vacancy_edit', vac_id = vac_id))
+    else:
+        return redirect(url_for('main_blueprint.main'))
+
+
+@main_blueprint.route('/vacancy/edit/<int:vac_id>', methods=['GET', 'POST'])
+def vacancy_edit(vac_id):
+    if session:
+        if request.method == 'GET':
+            user_id = session['user_id']
+            model = posts.PostsModel('postgres')
+            result = model.edit_post(vac_id, user_id)
+            return render_template('vacancy_edit.html', result = result)
+        if request.method == 'POST':
+            if 'save_button' in request.form:
+                user_id = session['user_id']
+                description = request.form['small_description']
+                name = request.form['name']
+                full_description = request.form['full_description']
+                email = request.form['email']
+                address = request.form['address']
+                user_id = session['user_id']
+                if (request.form['salary']):
+                    salary = request.form['salary']
+                else:
+                    salary = 0
+                print (vac_id, user_id, name, salary, email, address)
+                model = posts.PostsModel('postgres')
+                result = model.save_edit_post(vac_id, user_id, description, name, full_description, salary, email, address)
+                return redirect(url_for('main_blueprint.button', id = vac_id))
     else:
         return redirect(url_for('main_blueprint.main'))
 

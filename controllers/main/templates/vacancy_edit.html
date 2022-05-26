@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title%}Редактирование вакансии{% endblock %}
+{% block content %}
+<head>
+    <title>Bootstrap WYSIWYG Editor</title>
+    <meta charset="utf-8" />
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+    <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+	
+	<div class="container">
+    <div class="row mt-4">
+        <a style="width: 200px" href="/vacancy" class="btn ms-2 mb-4 btn-outline-primary" >Обратно к вакансиям</a>
+    </div>
+    <h2 class="p-2 text-start">Редактирование вакансии</h2>
+    {% if success %}
+    <div class="row p-2 text-start">
+      <div class="col">
+        <p style="color: green">
+          Вакансия успешно создана
+        </p>
+      </div>
+    </div>
+    {% endif %}
+	{% for res in result %}
+    <form method="post">
+		<div class="row">
+			<div class="col">
+				<label class="form-label">Название вакансии</label>
+				<input type="text" value = "{{ res.name }}" name = "name" id = "name" required class="form-control" placeholder="Название вакансии">
+			</div>
+		</div>
+		<div class="row mt-2">
+			<div class="col">
+				<label class="form-label">Краткое описание</label>
+				<input value = "{{ res.description }}"maxlength="120" type="text" name = "small_description" id = "name" required class="form-control" placeholder="Краткое описание">
+			</div>
+		</div>
+		<div class="row mt-2">
+			<div class="col">
+				<label class="form-label">Описание</label>
+				<textarea type="text" name = "full_description" required id="editor" class="form-control" placeholder="Описание" style="height: 200px">{{ res.full_description }}</textarea>
+				<script type="text/javascript">
+					$(document).ready(function () {
+						$("#editor").editor({
+							uiLibrary: 'bootstrap'
+						});
+					});
+				</script>
+			</div>
+		</div>
+		<div class="row mt-2">
+			<div class="col">
+				<label class="form-label">Зарплата</label>
+				<label style = "color: gray;" class = "ms-1">
+					* можно не указывать
+				</label>
+				<div class = "input-group">
+					<span class="input-group-text" id="addon-wrapping">₽</span>
+					<input value = "{{ res.salary }}" type="text" name = "salary" id = "salary" class="form-control" placeholder="Зарплата" aria-describedby="addon-wrapping">
+				</div>
+			</div>
+		</div>
+		<div class="accordion accordion-flush mt-3" id="accordionFlushExampleTwo">
+			<div class="accordion-item mt-2">
+				<p class="accordion-header" id="flush-headingTwo">
+					<input class="collapsed form-check-input" type="checkbox" name="flexRadioDefault" id="flexRadioDefault1" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+					<label class="form-check-label" for="flexCheckIndeterminate">
+						Указать вилку
+					</label>
+				</p>
+				  <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExampleTwo">
+					<div class="accordion-body">
+						<div class="row">
+							<div class="col">
+								<div class = "input-group">
+								<span class="input-group-text" id="addon-wrapping">₽</span>
+							  <input name = "first_price" type="text" class="form-control" placeholder="От" aria-label="От">
+							</div>
+							</div>
+							<div class="col">
+								<div class = "input-group">
+								<span class="input-group-text" id="addon-wrapping">₽</span>
+							  <input name = "second_price"t ype="text" class="form-control" placeholder="До" aria-label="До">
+							</div>
+							</div>
+						  </div>
+					</div>
+				  </div>
+				</div>
+		  </div>
+		<div class="row mt-2">
+			<div class="col">
+				<!-- <label class="form-label fs-4">Email</label> -->
+				<label for="exampleFormControlInput1" class="form-label">Адрес электронной почты</label>
+				<input value = "{{ res.email }}" type="email" name = "email" id = "email" required class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+			</div>
+			<!-- <div class="mb-3">
+				<input name = "email" id = "email" type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+			</div> -->
+		</div>
+		<div class="row mt-2">
+			<div class="col">
+				<label class="form-label">Укажите адрес</label>
+				<input value = "{{ res.address }}" type="text" name = "address" id = "address" required class="form-control" placeholder="Адрес" aria-describedby="addon-wrapping">
+			</div>
+		</div>
+        <button type="submit" class="mt-4 mb-4 btn btn-secondary">Прикрепить тест</button>
+        <input name = "save_button" type="submit" value ="Сохранить" class="mt-4 ms-2 mb-4 btn btn-primary"></a>
+    </form>
+    {% endfor %}
+</div>
+</body>
+{% endblock %}

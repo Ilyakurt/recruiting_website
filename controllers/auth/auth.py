@@ -19,11 +19,11 @@ def authorization():
             try:
                 with UseDatabase(current_app.config['db']['postgres']) as cursor:
                     cursor.execute ("""
-                        SELECT role, user_id, comp_name
+                        SELECT role, user_id
                         FROM users
                         WHERE login='%s' AND password='%s'
                         """ % (login, password))
-                    schema = ['role', 'user_id', 'comp_name']
+                    schema = ['role', 'user_id']
                     for con in cursor.fetchall():
                         result.append(dict(zip(schema, con)))
             except:
@@ -31,9 +31,12 @@ def authorization():
             if len(result) > 0:
                 session['role'] = result[0]['role']
                 session['user_id'] = result[0]['user_id']
-                session['comp_name'] = result[0]['comp_name']
                 session['user'] = login
-                # logger.info(session['name'] + " вошёл в систему")
+                if result[0]['role'] == 'employer':
+                    model = users.UsersModel('postgres')
+                    company = model.company_employer(result[0]['user_id'])
+                    session['company'] = str(company[1:-1])
+                print (session)
                 return redirect(url_for('main_blueprint.main'))
             else:
                 return render_template('auth.html', status='bad')
@@ -63,12 +66,18 @@ def authorization():
         # create_new_employer(data)
         if data['password'] == data['repeat_password']:
             role = 'employer'
-            exists, user_data = create_new_employer_insert(data, role)
+            exists, user_data = create_new_user(data, role)
             if not exists:
-                #logger.info(session['name'] + " создал нового пользователя")
-                create_new_employer(data, user_data)
                 model = users.UsersModel('postgres')
+                user_company = data.get("company")
+                status = 0
+                try:
+                    comp = model.insert_company(user_company, status)
+                except:
+                    status = 2
+                create_new_employer(data, user_data, status)
                 model.profile_create(user_data)
+                user_company = data.get("company")
                 return render_template('auth.html', new_user_login=data['login'])
             else:
                 print (data)
@@ -92,30 +101,20 @@ def create_new_user(data, role):
     else:
         return False, created
 
-def create_new_employer_insert(data, role):
-    model = users.UsersModel('postgres')
-    user_login = data.get("login")
-    user_password = data.get("password")
-    user_company = data.get("company")
-    user_role = role
-    created = model.insert_employer_to_users(user_login, user_password, user_role, user_company)
-    if created == 'None':
-        return True, {'login': user_login,
-                      'password': user_password,
-                      'role': user_role,
-                      'company': user_company}
-    else:
-        return False, created
+# def create_new_employer_insert(data, role):
+#     model = users.UsersModel('postgres')
+#     user_login = data.get("login")
+#     user_password = data.get("password")
+#     user_role = role
+#     created = model.insert_employer_to_users(user_login, user_password, user_role)
+#     if created == 'None':
+#         return True, {'login': user_login,
+#                       'password': user_password,
+#                       'role': user_role}
+#     else:
+#         return False, created
 
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'user' not in session:
-            return redirect(url_for('auth_blueprint.authorization'))
-        return f(*args, **kwargs)
-    return decorated_function
-
-def create_new_employer(data, user_id):
+def create_new_employer(data, user_id, status):
     model = users.UsersModel('postgres')
     data = request.form
     user_name = data.get("name")
@@ -126,17 +125,16 @@ def create_new_employer(data, user_id):
     user_city = data.get("city")
     user_address = data.get("address")
     user_id = user_id
-    created = model.insert_employer(user_name, user_last_name, user_company, user_phone, user_email, user_city, user_address, user_id)
+    created = model.insert_employer(user_name, user_last_name, user_company, user_phone, user_email, user_city, user_address, user_id, status)
     print ("Был создан user_id", created)
 
-
-# def admin_rights_required(f):
-#     @wraps(f)
-#     def decorated_function(*args, **kwargs):
-#         if session['role'] != 'admin':
-#             return render_template('access_error.html')
-#         return f(*args, **kwargs)
-#     return decorated_function
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user' not in session:
+            return redirect(url_for('auth_blueprint.authorization'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 @logout_blueprint.route('/', methods=['GET', 'POST'])
 def logout():
@@ -144,5 +142,4 @@ def logout():
     session.pop('role')
     session.pop('user_id')
     session.pop('user')
-    session.pop('comp_name')
     return redirect(url_for('auth_blueprint.authorization'))

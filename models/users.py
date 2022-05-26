@@ -22,26 +22,36 @@ class UsersModel:
             result = res[1:len(res) - 2]
         return result
 
-    def insert_employer_to_users(self, login, password, role, comp_name):
+    def insert_employer_to_users(self, login, password, role):
         with UseDatabase(current_app.config['db'][self.permission]) as cursor:
             cursor.execute("""
-                INSERT INTO users (login, password, role, comp_name)
-	            SELECT %s, %s, %s, %s
+                INSERT INTO users (login, password, role)
+	            SELECT %s, %s, %s
             	FROM users
                 WHERE NOT EXISTS (
                     SELECT login FROM users WHERE login = %s
                 ) LIMIT 1
-                RETURNING user_id""", (login, password, role, comp_name, login))
+                RETURNING user_id""", (login, password, role, login))
             res = str(cursor.fetchone())
             result = res[1:len(res) - 2]
         return result
 
-    def insert_employer(self, name, last_name, company, phone, email, city, address, user_id):
+    def insert_company(self, company, status):
         with UseDatabase(current_app.config['db'][self.permission]) as cursor:
             cursor.execute("""
-                INSERT INTO employers (name, last_name, company, phone, email, city, address, user_id)
-	            SELECT %s, %s, %s, %s, %s, %s, %s, %s
-                RETURNING user_id""", (name, last_name, company, phone, email, city, address, user_id))
+                INSERT INTO company (company, status)
+	            SELECT %s, %s
+                RETURNING company""", (company, status))
+            res = str(cursor.fetchone())
+            result = res[1:len(res) - 2]
+        return result
+
+    def insert_employer(self, name, last_name, company, phone, email, city, address, user_id, status):
+        with UseDatabase(current_app.config['db'][self.permission]) as cursor:
+            cursor.execute("""
+                INSERT INTO employers (name, last_name, company, phone, email, city, address, user_id, status)
+	            SELECT %s, %s, %s, %s, %s, %s, %s, %s, %s
+                RETURNING user_id""", (name, last_name, company, phone, email, city, address, user_id, status))
             res = str(cursor.fetchone())
             result = res[1:len(res) - 2]
         return result
@@ -82,6 +92,17 @@ class UsersModel:
             result = []
             for con in cursor.fetchall():
                 result.append(dict(zip(schema, con)))
+        return result
+
+    def company_employer(self, user_id):
+        with UseDatabase(current_app.config['db'][self.permission]) as cursor:
+            cursor.execute("""
+                SELECT company
+                FROM employers
+                WHERE user_id = %s
+                """ % (user_id))
+            res = str(cursor.fetchone())
+            result = res[1:len(res) - 2]
         return result
 
     def phone_number_update(self, phone_number, user_id):
@@ -140,6 +161,32 @@ class UsersModel:
                     WHERE user_id = %s
                     RETURNING 1
                 """ % (name, user_id))
+            result = str(cursor.fetchone())
+            print (result)
+        return result
+
+    def employer_company_profile(self, company):
+        with UseDatabase(current_app.config['db'][self.permission]) as cursor:
+            print (company)
+            cursor.execute("""
+                SELECT company, description
+                FROM company
+                WHERE company = '%s'
+                """ % (company))
+            schema = ['company', 'description']
+            result = []
+            for con in cursor.fetchall():
+                result.append(dict(zip(schema, con)))
+        return result
+
+    def employer_company_profile_edit(self, company, description):
+        with UseDatabase(current_app.config['db'][self.permission]) as cursor:
+            cursor.execute("""
+                    UPDATE company
+                    SET description = '%s'
+                    WHERE company = '%s'
+                    RETURNING 1
+                """ % (description, company))
             result = str(cursor.fetchone())
             print (result)
         return result

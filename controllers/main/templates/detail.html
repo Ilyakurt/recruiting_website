@@ -14,11 +14,14 @@
 						</p>
 						{% endif %}
 						<p class="card-text text-break">{{ res.description }}</p>
-						<p class="card-text">Зарплата: {{ res.salary }}</p>
-						<p class="card-text">Требуется: {{ res.name }}</p>
+						{% if res.salary != 0 %} 
+							<h6 class="card-text">Зарплата: {{ res.salary }}</h6>
+						{% else  %}
+							<h6 class="card-text">Зарплата не указана </h6>
+						{% endif %}
+						<h6 class="card-text mb-3">Требуется: {{ res.name }}</h6>
 						{{ res.full_description | safe }}
-						<p class="card-text">Email: {{ res.email }}</p>
-						<p class="card-text">Address: {{ res.address }}</p>
+						<p class="card-text mt-4 mb-4">Адрес: {{ res.address }}</p>
 					</div>
 				</div>
 				{% endfor %}
@@ -26,8 +29,8 @@
 			<form method="POST">
 				<div class="row">
 					<div class="col">
-						{% if session %}
-						<button name="response_button"  type="button"  class="mt-2 btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
+						{%if session['role'] == 'client' %}
+						<button name="response_button"  type="button"  class="mt-2 btn btn-success mb-5" data-bs-toggle="modal" data-bs-target="#exampleModal">
 							Откликнуться
 						</button>
 						<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -56,7 +59,7 @@
 						  </div>
 						{%endif%}
 						{%if not session%}
-						<button name="response_button" type="button" class="mt-2 btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
+						<button name="response_button" type="button" class="mt-2 mb-5 btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
 							Откликнуться
 						</button>
 						<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -73,7 +76,7 @@
 							</div>
 						</div>
 						{%endif%}
-						<a href="/#" class="btn btn-primary mt-2">Вернуться обратно</a>
+						<a href="/#" class="btn btn-primary mt-2 mb-5">Вернуться обратно</a>
 					
 					</div>
 					

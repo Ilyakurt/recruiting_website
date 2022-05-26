@@ -1,7 +1,7 @@
 # from asyncio import constants
 from flask import render_template, request, session, redirect, Blueprint, current_app, url_for
 from DBCM import UseDatabase
-from models import resume
+from models import resume, users
 
 profile_blueprint = Blueprint('profile_blueprint', __name__, template_folder='templates')
 
@@ -157,3 +157,31 @@ def user_profile(id):
         #     return render_template('employer_company_profle.html', result = result) 
         # else:
         #     return render_template('employer_company_profle.html') 
+
+@profile_blueprint.route('/company_profile', methods=['GET', 'POST'])
+def company_profile():
+    if session:
+        if session['role'] == 'employer':
+            if request.method == 'GET':
+                company = session['company']
+                model = users.UsersModel('postgres')
+                result = model.employer_company_profile(company)
+                print (result)
+                return render_template('company_profile.html', result = result)
+            if request.method == 'POST':
+                if 'description' in request.form:
+                    company = session['company']
+                    model = users.UsersModel('postgres')
+                    result = model.employer_company_profile(company)
+                    return render_template('company_profile.html', result = result, edit = True)
+                if 'save_button' in request.form:
+                    description = request.form['edit_description']
+                    company = session['company']
+                    print (company, description) 
+                    model = users.UsersModel('postgres')
+                    model.employer_company_profile_edit(company, description)
+                    return redirect(url_for('profile_blueprint.company_profile'))
+        else:
+            return render_template('error_url.html')
+    else:
+        return render_template('error_url.html')

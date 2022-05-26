@@ -29,7 +29,49 @@ class PostsModel:
             for con in cursor.fetchall():
                 result.append(dict(zip(schema, con)))
         return result
-        
+
+    def edit_post(self, id, user_id):
+        with UseDatabase(current_app.config['db']['postgres']) as cursor:
+            cursor.execute("""
+                SELECT 
+                    description, 
+                    name, 
+                    full_description, 
+                    salary, 
+                    email, 
+                    address 
+                FROM vacancy 
+                WHERE 1 = 1 
+                    AND id = %s
+                    AND id_user = %s
+                """ % (id, user_id))
+            schema = ['description', 'name', 'full_description', 'salary', 'email', 'address']
+            result = []
+            for con in cursor.fetchall():
+                result.append(dict(zip(schema, con)))
+        return result
+
+    def save_edit_post(self, vac_id, user_id, description, name, full_description, salary, email, address):
+        print (vac_id, user_id, name, salary, email, address)
+        with UseDatabase(current_app.config['db']['postgres']) as cursor:
+            cursor.execute("""
+                UPDATE vacancy
+                    SET 
+                        description = '%s', 
+                        name = '%s', 
+                        full_description = '%s', 
+                        salary = %s, 
+                        email = '%s', 
+                        address = '%s' 
+                WHERE 1 = 1 
+                    AND id = %s
+                    AND id_user = %s
+                RETURNING id
+                """ % (description, name, full_description, salary, email, address, vac_id, user_id))
+            res = str(cursor.fetchone())
+        result = res[1:-2]
+        return result
+
     def count_vacancy(self):
         with UseDatabase(current_app.config['db']['postgres']) as cursor:
             cursor.execute("""
