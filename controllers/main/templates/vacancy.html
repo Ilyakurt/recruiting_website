@@ -104,7 +104,31 @@
 				<input type="text" name = "address" id = "address" required class="form-control" placeholder="Адрес" aria-describedby="addon-wrapping">
 			</div>
 		</div>
-        <button type="submit" class="mt-4 mb-4 btn btn-secondary">Прикрепить тест</button>
+		<div class="modal fade" id="exampl" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Прикрепление теста </h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+					</div>
+					<div class="modal-body">
+						<p class="card-title">Выберите тест</p>
+						<select name = "quiz_select" class="form-select" aria-label="Пример выбора по умолчанию">
+							<option value="0" selected>Не выбран</option>
+							{% for quiz in quiz_res %}
+								<option value="{{ quiz.qid }}">{{ quiz.subject }}</option>
+							{% endfor %}
+						</select>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Сохранить</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampl">
+			Прикрепить тест
+		</button>
         <input name = "add_button" type="submit" value ="Опубликовать вакансию" class="mt-4 ms-2 mb-4 btn btn-success"></a>
     </form>
 </div>
