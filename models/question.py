@@ -5,12 +5,13 @@ from DBCM import UseDatabase
 class Quiz:
     def __init__(self, role):
         self.permission = role
-        
+
     def get_subject(self):
             with UseDatabase(current_app.config['db']['client']) as cursor:
                 cursor.execute("""
                     SELECT qid, subject, status 
                     FROM quiz
+                    WHERE status = 2
                     """)
                 schema = ['qid', 'subject', 'status']
                 result = []
@@ -47,9 +48,10 @@ class Quiz:
             cursor.execute("""
                 SELECT qid, question, answer, option1, option2, option3, option4, qq_id
                 FROM quiz_question
-                WHERE qid = %s
+                WHERE 1 = 1
+                    AND qid = %s
                 """ % (qid))
-            schema = ['qid', 'question', 'answer', 'option1', 'option2', 'option3', 'option4', 'qq_id']
+            schema = ['qid', 'question', 'check', 'option1', 'option2', 'option3', 'option4', 'qq_id']
             result = []
             for con in cursor.fetchall():
                 result.append(dict(zip(schema, con)))
@@ -103,6 +105,17 @@ class Quiz:
             result = res[1:len(res) - 2]
             return result
 
+    def delete_quiz_question(self, qid):
+        with UseDatabase(current_app.config['db']['postgres']) as cursor:
+            cursor.execute("""
+                DELETE
+                FROM quiz_question
+                WHERE qid = %s
+                """ % (qid))
+            result = 'Success'
+        return result
+
+
     # def select_quiz_vacancy(self, user_id, qid):
     #     with UseDatabase(current_app.config['db']['client']) as cursor:
     #         cursor.execute("""
@@ -128,6 +141,20 @@ class Quiz:
             print ("res", result)
         return result
 
+    def edit_quiz(self, subject, description, qid):
+        with UseDatabase(current_app.config['db']['postgres']) as cursor:
+            cursor.execute("""
+                UPDATE quiz 
+                    SET subject = '%s', 
+                    description = '%s'
+                WHERE qid = %s
+                RETURNING qid
+            """ % (subject, description, qid))
+            res = str(cursor.fetchone())
+            result = res[1:len(res) - 2]
+            print ("res", result)
+        return result
+
     def select_quiz_edit(self, user_id, qid):
         with UseDatabase(current_app.config['db']['postgres']) as cursor:
             cursor.execute("""
@@ -141,3 +168,41 @@ class Quiz:
             for con in cursor.fetchall():
                 result.append(dict(zip(schema, con)))
             return result
+
+    def quiz_attach(self, user_id):
+        with UseDatabase(current_app.config['db']['postgres']) as cursor:
+            cursor.execute("""
+                    SELECT subject, status, qid, description
+                    FROM quiz 
+                    WHERE user_id = %s
+                """ % (user_id))
+            schema = ['subject', 'status', 'qid', 'description']
+            result = []
+            for con in cursor.fetchall():
+                result.append(dict(zip(schema, con)))
+            return result
+
+
+    def delete_quiz(self, qid):
+        with UseDatabase(current_app.config['db']['postgres']) as cursor:
+            cursor.execute("""
+                DELETE 
+                FROM quiz 
+                WHERE 
+                    qid = %s
+            """ % (qid))
+            result = 'Success'
+        return result
+
+        
+    def update_quiz_question(self, question_str, option1, option2, option3, option4, check, qid):
+        with UseDatabase(current_app.config['db']['postgres']) as cursor:
+            cursor.execute("""
+                INSERT INTO quiz_question (question, option1, option2, option3, option4, answer, qid)
+                VALUES ('%s', '%s', '%s', '%s', '%s', %s, %s)
+                RETURNING qid
+            """ % (question_str, option1, option2, option3, option4, check, qid))
+            res = str(cursor.fetchone())
+            result = res[1:len(res) - 2]
+            print ("res", result)
+        return result

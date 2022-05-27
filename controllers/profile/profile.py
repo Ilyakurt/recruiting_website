@@ -142,21 +142,25 @@ def user_about_edit(resume_id):
     else:
         return redirect(url_for('main_blueprint.profile'))
 
-@profile_blueprint.route('/user/<int:id>', methods=['GET', 'POST'])
-def user_profile(id):
-    if request.method == 'GET':
-        user_id = 40
-        model = resume.ResumeModel('postgres')
-        result = model.select_user(user_id)
-        user_resume = model.resume_edit(user_id, id)
-        user_resume_experience = model.select_resume_experience(user_id, id)
-        return render_template('user_profile.html', result = result, user_resume = user_resume, user_resume_experience = user_resume_experience)
-        # model = employer.EmployerModel('postgres')
-        # result = model.employer_company_profile(company)
-        # if len(result) > 0:
-        #     return render_template('employer_company_profle.html', result = result) 
-        # else:
-        #     return render_template('employer_company_profle.html') 
+@profile_blueprint.route('/user/<int:id>/<int:vac_id>', methods=['GET', 'POST'])
+def user_profile(id, vac_id):
+    if session:
+        if session['role'] == 'employer':
+            if request.method == 'GET':
+                user_id = id
+                model = resume.ResumeModel('postgres')
+                result = model.select_user(user_id)
+                user_resume = model.resume_edit(user_id, vac_id)
+                user_resume_experience = model.select_resume_experience(user_id, id)
+                return render_template('user_profile.html', result = result, user_resume = user_resume, user_resume_experience = user_resume_experience)
+                # model = employer.EmployerModel('postgres')
+                # result = model.employer_company_profile(company)
+                # if len(result) > 0:
+                #     return render_template('employer_company_profle.html', result = result) 
+                # else:
+                #     return render_template('employer_company_profle.html') 
+        return render_template('error_url.html')
+    return render_template('error_url.html')
 
 @profile_blueprint.route('/company_profile', methods=['GET', 'POST'])
 def company_profile():

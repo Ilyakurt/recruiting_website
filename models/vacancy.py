@@ -21,12 +21,12 @@ class VacancyModel:
     def user_vacancy(self, user_id):
         with UseDatabase(current_app.config['db'][self.permission]) as cursor:
             cursor.execute("""
-                SELECT company, description, salary, name, id, status
+                SELECT company, description, salary, name, id, status, qid, address
                 FROM vacancy
                 WHERE id_user = %s
                 ORDER BY id
             """  % (user_id))
-            schema = ['company', 'description', 'salary', 'name', 'id', 'status']
+            schema = ['company', 'description', 'salary', 'name', 'id', 'status', 'qid', 'address']
             result = []
             for con in cursor.fetchall():
                 result.append(dict(zip(schema, con)))

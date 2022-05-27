@@ -20,8 +20,16 @@
 							<h6 class="card-text">Зарплата не указана </h6>
 						{% endif %}
 						<h6 class="card-text mb-3">Требуется: {{ res.name }}</h6>
-						{{ res.full_description | safe }}
+						{%if result[0]['full_description'] == None %}
+						<p class="card-text mt-4 mb-4">Описание не указано</p>
+						{% else %}
+							{{ res.full_description | safe }}
+						{% endif %}
+						{%if result[0]['address'] == None %}
+						<p class="card-text mt-4 mb-4">Адрес не указан</p>
+						{% else %}
 						<p class="card-text mt-4 mb-4">Адрес: {{ res.address }}</p>
+						{% endif %}
 					</div>
 				</div>
 				{% endfor %}
@@ -30,34 +38,73 @@
 				<div class="row">
 					<div class="col">
 						{%if session['role'] == 'client' %}
-						<button name="response_button"  type="button"  class="mt-2 btn btn-success mb-5" data-bs-toggle="modal" data-bs-target="#exampleModal">
-							Откликнуться
-						</button>
-						<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-							<div class="modal-dialog">
-							  <div class="modal-content">
-								<div class="modal-header">
-								  <h5 class="modal-title" id="exampleModalLabel">Прикрепление резюме</h5>
-								  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+							{% if result[0]['status'] == 2 %}
+							<button name="response_button"  type="button"  class="mt-2 btn btn-secondary mb-5" data-bs-toggle="modal" data-bs-target="#exampleModal">
+								Необходимо пройти тест
+							</button>
+							<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+								<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+									<h5 class="modal-title" id="exampleModalLabel">Для отклика на эту вакансию необходимо пройти тест</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+									</div>
+									<div class="modal-body">
+										<div class="form-floating">
+											<select name = "resume_id" class="form-select" id="floatingSelect" aria-label="Floating label select example">
+											{% for res in user_resume %}
+												<option value="{{ res.resume_id}}">{{ res.position_work}} </option>
+											{% endfor %}
+											</select>
+											<label for="floatingSelect">Список ваших резюме</label>
+										</div>
+										<hr>
+										<div class="form-floating">
+											{% for test in test_result %}
+												<h6>Тест: {{ test.subject }} </h6>
+												<p>{{ test.description }} </p>
+											{% endfor %}
+										</div>
+									</div>
+									<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+									<input value = "{{ test_result[0]['qid'] }}" type = "hidden" name = "qid"></input>
+									<button type = "submit" name = "quiz_test" class="btn btn-success">Пройти тест</button>
+									</div>
 								</div>
-								<div class="modal-body">
-									<div class="form-floating">
-										<select name = "resume_id" class="form-select" id="floatingSelect" aria-label="Floating label select example">
-										  {% for res in user_resume %}
-										  	<option value="{{ res.resume_id}}">{{ res.position_work}} </option>
-										  {% endfor %}
-										</select>
-										<label for="floatingSelect">Список ваших резюме</label>
-									  </div>
 								</div>
-								<div class="modal-footer">
-								  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-								  <button name = "send_resume" type="submit" class="btn btn-success">Отправить резюме</button>
-								</div>
-							  </div>
 							</div>
-						  </div>
-						{%endif%}
+							{%endif%}
+							{% if result[0]['status'] == 1 %}
+							<button name="response_button"  type="button"  class="mt-2 btn btn-success mb-5" data-bs-toggle="modal" data-bs-target="#exampleModal">
+								Откликнуться
+							</button>
+							<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+								<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+									<h5 class="modal-title" id="exampleModalLabel">Прикрепление резюме</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+									</div>
+									<div class="modal-body">
+										<div class="form-floating">
+											<select name = "resume_id" class="form-select" id="floatingSelect" aria-label="Floating label select example">
+											{% for res in user_resume %}
+												<option value="{{ res.resume_id}}">{{ res.position_work}} </option>
+											{% endfor %}
+											</select>
+											<label for="floatingSelect">Список ваших резюме</label>
+										</div>
+									</div>
+									<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+									<button name = "send_resume" type="submit" class="btn btn-success">Отправить резюме</button>
+									</div>
+								</div>
+								</div>
+							</div>
+							{%endif%}
+						{%endif%}	
 						{%if not session%}
 						<button name="response_button" type="button" class="mt-2 mb-5 btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
 							Откликнуться

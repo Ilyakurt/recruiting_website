@@ -49,10 +49,12 @@
                       </div>
                       <p class="card-title mt-4">На нашем сайте можно проходить как общие, так и тесты для конкретных вакансий.</p>
                       <p class="card-title">При успешном прохождении общего теста работодатель может пригласить вас для дальнейшего общения.</p>
-                      {%if session%}
+                      {%if session %}
                       <a href="/quiz/list" class="btn mt-2 btn-primary">Перейти к тестам</a>
+					  {%if session['role'] != 'client' %}
 					  <a href="/quiz/create" class="btn mt-2 btn-outline-primary">Перейти к созданию тестов</a>
-                      {% else %}
+					  {% endif %}
+					  {% else %}
                       <p class="card-title mt-4">Для того чтобы перейти к общим тестам вам необходимо войти или зарегестрироваться</p>
                       <a href="/auth/auth" class="btn btn-primary">Авторизация</a>
                       {% endif %}

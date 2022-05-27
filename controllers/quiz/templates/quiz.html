@@ -2,22 +2,21 @@
 {% block title%}Рекрутинг. Поиск вакасий{% endblock %}
 {% block content %}
 <body>
-	<h2 class="card-title text-center mt-4">Общие тесты для оценки кандидатов</h2>
-	{%for res in result%}	
-		<!-- <div class="card" style="width: 40rem;"> -->
+	<div class="container">
+		<h2 class="card-title text-start mt-4">Общие тесты для оценки кандидатов</h2>
+		<div class="row ">
+			{%for res in result%}	
+			<div class="col-sm-5 col-md-4 offset-md-0 row mt-5 ps-5">
 			<div class="card-body">
-				<h2 class="card-title text-center">Тема: {{ res.subject }}</h2>
-				<p class="card-text text-center"> {{ res.qid }} Тест был разработан нашей компанией</p>
-				<!-- <p class="card-text text-center">Требуется: {{ res.id }}</p> -->
-				<!-- <h2>{{ res.salary }}</h2> -->
-				<!-- <h2>{{ res.name }}</h2> -->
+				<h2 class="card-title text-start">Тема: {{ res.subject }}</h2>
+				<p class="card-text text-start"> {{ res.qid }} Тест был разработан нашей компанией</p>
 				<form method="POST">
-					<a href="/quiz/list/{{ res.qid }}" class="d-grid gap-2 col-4 mx-auto btn btn-primary" name="detail" value="{{ res.qid }}">Подробнее</a>
+					<a href="/quiz/list/{{ res.qid }}" class="btn btn-primary" name="detail" value="{{ res.qid }}">Подробнее</a>
 				</form>
 			</div>
-			<p class="tab"></p>
-
-		<!-- </div> -->
-	{% endfor %}
+			</div>			
+			{% endfor %}
+		</div>
+	</div>
 </body>
 {% endblock %}

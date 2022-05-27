@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title%}Рекрутинг. Поиск вакасий{% endblock %}
+{% block content %}
+<!-- 
+	<nav class="navbar navbar-light bg-light">
+		<div class="container-fluid">
+		  <form class="d-flex">
+			<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+			<button class="btn btn-outline-success" type="submit">Search</button>
+		  </form>
+		</div>
+	  </nav> -->
+
+<body>
+	<div class="container">
+        <!-- <a href="/resume" class="btn mt-4 btn-primary">Создать резюме</a> -->
+        <!-- <h2 class="text-start mt-4">Мои резюме</h2>   -->
+        <div class="row">
+            <div class="col">
+                <h2 class="text-start mt-4">Соискатели</h2> 
+            </div>	
+			<ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">По результатам теста</button>
+                  </li>
+				<li class="nav-item" role="presentation">
+				  <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Неразобранные</button>
+				</li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Подумать</button>
+                  </li>
+                <li class="nav-item" role="presentation">
+                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Интервью</button>
+                </li>
+				<li class="nav-item" role="presentation">
+				  <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Отказ</button>
+				</li>
+			  </ul>
+			  <form method="post">
+				<div class="tab-content" id="myTabContent">
+					<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+						{%for res in result%}
+							<div class="row mt-3">
+								<div class="row">
+									<div class="col">
+										Имя: {{ res.name }} {{ res.last_name }}
+									</div>
+								</div>
+								<div class="row">
+									<div class="col">
+										Регион: {{ res.region }}
+									</div>
+								</div>
+                                <div class="row">
+									<div class="col">
+										О себе: {{ res.about }}
+									</div>
+								</div>
+                                <div class="row">
+									<div class="col">
+										Результат теста: 7/7 - 100% {{ res.id_user }} {{ res.id_vac }}
+									</div>
+								</div>
+							</div>
+                            <div class="btn-group">
+							<a href="/user/{{res.id_user}}/{{res.resume_id}}" style="text-decoration: none;"name = "active_resume" value = "{{ res.resume_id }}"  class="mt-1 btn btn-secondary">Открыть резюме</a>
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle mt-1 ms-2" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Действие
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                  <li><a class="dropdown-item" href="#">Подумать</a></li>
+                                  <li><a class="dropdown-item" href="#">Пригласить</a></li>
+                                  <li><a class="dropdown-item" href="#">Отказать</a></li>
+                                </ul>
+                              </div>
+                            </div>
+                        {% endfor %}
+					</div>
+					<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+						{%for res in result%}
+							<div class="row mt-3">
+								<div class="row">
+									<div class="col">
+										Имя: {{ res.name }} {{ res.last_name }}
+									</div>
+								</div>
+								<div class="row">
+									<div class="col">
+										Регион: {{ res.region }}
+									</div>
+								</div>
+                                <div class="row">
+									<div class="col">
+										О себе: {{ res.about }}
+									</div>
+								</div>
+                                <div class="row">
+									<div class="col">
+										Результат теста: 7/7 - 100%
+									</div>
+								</div>
+							</div>
+                            <div class="btn-group">
+							<a href="/user/{{res.user_id}}/{{res.id_vac}}" style="text-decoration: none;"name = "active_resume" value = "{{ res.resume_id }}"  class="mt-1 btn btn-secondary">Открыть резюме</a>
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle mt-1 ms-2" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Действие
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                  <li><a class="dropdown-item" href="#">Подумать</a></li>
+                                  <li><a class="dropdown-item" href="#">Пригласить</a></li>
+                                  <li><a class="dropdown-item" href="#">Отказать</a></li>
+                                </ul>
+                              </div>
+                            </div>
+                        {% endfor %}
+					</div>
+				</div>
+			</div>
+		</form>
+    </div>
+</body>
+{% endblock %}

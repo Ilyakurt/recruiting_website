@@ -1,6 +1,6 @@
 from flask import render_template, request, session, redirect, Blueprint, current_app, url_for, abort
 from DBCM import UseDatabase
-from models import add_vacancy, posts, users, vacancy, employer, resume
+from models import add_vacancy, posts, users, vacancy, employer, resume, question, otclick
 
 main_blueprint = Blueprint('main_blueprint', __name__, template_folder='templates')
 
@@ -32,11 +32,11 @@ def search_vacancy(search):
         if vacancy_count > 0 and vacancy_count < 16:
             model = posts.PostsModel('postgres')
             result = model.search_vacancy(name, num_page)
-            return render_template('main.html', result = result, name = name, page_paginate = 0)
+            return render_template('main.html', result = result, name = name, page_paginate = 0, vacancy_count = vacancy_count)
         if vacancy_count > 15:
             model = posts.PostsModel('postgres')
             result = model.search_vacancy(name, num_page)
-            return render_template('main.html', result = result, name = name, page_paginate = 0)
+            return render_template('main.html', result = result, name = name, page_paginate = 0, vacancy_count = vacancy_count)
         else:
             return render_template('main.html', name = name, page_paginate = 0, search_count = 0)  
     if request.method == 'POST':
@@ -58,10 +58,16 @@ def button(id):
                 user_id = session['user_id']
                 model = resume.ResumeModel('postgres')
                 user_resume = model.select_resume(user_id)
-                print (resume)
-                return render_template('detail.html', result = result, user_resume = user_resume)
+                try:
+                    qid = result[0]['qid']
+                    model = question.Quiz('postgres')
+                    test_result = model.select_description(qid) 
+                    return render_template('detail.html', result = result, user_resume = user_resume, test_result = test_result)
+                except:
+                    return render_template('detail.html', result = result, user_resume = user_resume)
             return render_template('detail.html', result = result)
-        return render_template('detail.html', result = result)
+        else:
+            return render_template('detail.html', result = result)
     if session:
         if request.method == 'POST':
             if 'send_resume' in request.form:
@@ -70,6 +76,12 @@ def button(id):
                 resume_id = request.form['resume_id']
                 model.otclick(id, user, resume_id)
                 result = model.select_post(id)
+            if 'quiz_test' in request.form:
+                qid = request.form['qid']
+                resume_id = request.form['resume_id']
+                vac_id = id
+                print (request.form)
+                return redirect(url_for('quiz_blueprint.quiz_vacancy', qid = qid, vac_id = vac_id, resume_id = resume_id))
             return render_template('detail.html', result = result, success=True)
     else:
         return ('Вам нужно зарегистрироваться')
@@ -88,23 +100,32 @@ def employer_profile(company):
 def new_vacancy():
     if session:
         if session['role'] == 'employer':
-            if 'add_button' in request.form:
-                company = session['company']
-                description = request.form['small_description']
-                name = request.form['name']
-                full_description = request.form['full_description']
-                email = request.form['email']
-                address = request.form['address']
+            if request.method == 'GET':
                 user_id = session['user_id']
-                status = 1
-                if (request.form['salary']):
-                    salary = request.form['salary']
-                else:
-                    salary = 0
-                with UseDatabase(current_app.config['db']['postgres']) as cursor:
-                    cursor.execute("""INSERT INTO vacancy(company, description, name, full_description, salary, email, address, id_user, status)
-                    VALUES ('%s', '%s', '%s', '%s', %s, '%s', '%s', '%s', '%s')""" % (company, description, name, full_description, salary, email, address, user_id, status))
-                return render_template('vacancy.html', success = True)
+                quiz_model = question.Quiz('postgres')
+                quiz_res = quiz_model.quiz_attach(user_id)
+                return render_template('vacancy.html', quiz_res = quiz_res)
+            if request.method == 'POST':
+                if 'add_button' in request.form:
+                    company = session['company']
+                    description = request.form['small_description']
+                    name = request.form['name']
+                    full_description = request.form['full_description']
+                    email = request.form['email']
+                    address = request.form['address']
+                    user_id = session['user_id']
+                    qid = request.form['quiz_select']
+                    if int(qid) == 0:
+                        qid = 'NULL'
+                    status = 1
+                    if (request.form['salary']):
+                        salary = request.form['salary']
+                    else:
+                        salary = 0
+                    with UseDatabase(current_app.config['db']['postgres']) as cursor:
+                        cursor.execute("""INSERT INTO vacancy(company, description, name, full_description, salary, email, address, id_user, status, qid)
+                        VALUES ('%s', '%s', '%s', '%s', %s, '%s', '%s', '%s', '%s', %s)""" % (company, description, name, full_description, salary, email, address, user_id, status, qid))
+                    return render_template('vacancy.html', success = True)
             return render_template('vacancy.html')
         else:
             return render_template('error_url.html')
@@ -114,20 +135,39 @@ def new_vacancy():
 @main_blueprint.route('/response')
 def response():
     if session:
-        print (session)
         user_id = session['user_id']
         role = session['role']
         if request.method == 'GET':
             if role == 'employer' or role == 'admin':
-                print ("1")
-                model = add_vacancy.Vacancy('postgres')
-                result = model.select_response()
-                return render_template('response.html', result = result)
+                model = vacancy.VacancyModel('postgres')
+                result = model.user_vacancy(user_id)
+                otclick_model = otclick.OtclickModel('postgres')
+                otclick_result = otclick_model.select_otclick(user_id)
+                print (result)
+                print (otclick_result)
+                return render_template('response.html', result = result, otclick_result = otclick_result)
             if role == 'client':
-                print ("2")
                 model = resume.ResumeModel('postgres')
                 result = model.select_response(user_id)
                 return render_template('user_otclick.html', result = result)
+    return redirect(url_for('main_blueprint.main'))
+
+@main_blueprint.route('/response/<int:id>')
+def response_resume(id):
+    if session:
+        if request.method == 'GET':
+            user_id = session['user_id']
+            role = session['role']
+            if role == 'employer' or role == 'admin':
+                model = otclick.OtclickModel('postgres')
+                check_result = model.check_user(user_id, id)
+                if int(check_result) == 1:
+                    result = model.vacancy_resume(id)
+                    print (result)
+                    return render_template('vacancy_otclick.html', result = result)
+                else: 
+                    return render_template('error_url.html')
+            return render_template('error_url.html')
     return redirect(url_for('main_blueprint.main'))
 
 @main_blueprint.route('/vacancy', methods=['GET', 'POST'])
@@ -137,15 +177,29 @@ def profile_vacancy():
             user_id = session['user_id']
             model = vacancy.VacancyModel('postgres')
             result = model.user_vacancy(user_id)
-            return render_template('profile_vacancy.html', result = result)
+            quiz_model = question.Quiz('postgres')
+            quiz_res = quiz_model.quiz_attach(user_id)
+            print (quiz_res)
+            return render_template('profile_vacancy.html', result = result, quiz_res = quiz_res)
         if request.method == 'POST':
             if 'save_change' in request.form:
                 data = request.form
                 vac_salary = request.form['salary']
                 vac_status = request.form['active']
                 vac_id = request.form['id']
+                qid = request.form['quiz_select']
+                print ("qid is", qid)
                 model = vacancy.VacancyModel('postgres')
                 result = model.user_vacancy_status_salary_update(vac_id, vac_status, vac_salary)
+                if int(qid) != 0:
+                    status = 2
+                    post_model = posts.PostsModel('posgres')
+                    post_model.quiz_attach(vac_id, qid, status)
+                if int(qid) == 0:
+                    status = 0
+                    qid = 'NULL'
+                    post_model = posts.PostsModel('posgres')
+                    post_model.quiz_attach(vac_id, qid, status)
                 print ("data is is", data)
                 return redirect(url_for('main_blueprint.profile_vacancy'))
             if 'change_description' in request.form:
@@ -153,6 +207,11 @@ def profile_vacancy():
                 user_id = session['user_id']
                 print ("111111111", vac_id, user_id)
                 return redirect(url_for('main_blueprint.vacancy_edit', vac_id = vac_id))
+            if 'delete_vacancy' in request.form:
+                vac_id = request.form['id']
+                model = posts.PostsModel('postgres')
+                result = model.delete_post(vac_id)
+                return redirect(url_for('main_blueprint.profile_vacancy'))
     else:
         return redirect(url_for('main_blueprint.main'))
 

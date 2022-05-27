@@ -10,13 +10,44 @@
             </div>
             <div class="col">
                 <h2 class="text-start">{{ result[0]['subject'] }}</h2> 
-                <button name = "edit_subject" class="mt-1 btn btn-secondary">Изменить</button>
+                <p class="card-text">{{ result[0]['description'] }}</p>
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampl">
+                    Изменить
+                </button>
+                <!-- <button name = "edit_subject" type = "submit" class="mt-1 btn btn-secondary">Изменить</button> -->
+                <div class="modal fade" id="exampl" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Редактирование теста</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                            </div>
+                            <div class="modal-body">
+                                <label for="basic-url" class="form-label">Название</label>
+                                <div class="input-group mb-3">
+                                    <input name = "subject" type="text" class="form-control" id="" aria-describedby="basic-addon3" value="{{ result[0]['subject'] }}">
+                                </div>
+                                <hr>
+                                <p class="card-title">Описание</p>
+                                <div class="input-group mb-3">
+                                        <textarea name = "description" class="form-control" id="floatingTextarea" style="height: 100px" >{{ result[0]['description'] }}</textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampl">
+                                    Отмена
+                                </button>
+                                <button name = "edit_subject" type="submit" class="btn btn-primary">Сохранить</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>	
             {%for res in result%}
             <div class="row">
                 <div class="col">
                     <label for="validationDefault03" class="form-label mt-4 fs-4">Вопрос</label>
-                    <input type="text" name = "question" id = "position" required class="form-control" placeholder="Введите ваш вопрос"></input>
+                    <input type="text" name = "question" id = "position" class="form-control" placeholder="Введите ваш вопрос"></input>
                 </div>
             </div>
             <div class="row">
@@ -52,8 +83,7 @@
             </div>
                 <div class="col mt-2">
                     <button name="question_add" type="submit" class="mt-1 btn btn-primary" >Добавить вопрос</button>
-                    <button name = "save_button"  class="mt-1 btn btn-success">Сохранить</button>
-                    <!-- <button name = "delete_resume" value = "{{ res.resume_id }}" type = "submit" class="mt-1 btn btn-danger">Удалить</button> -->
+                    <button name = "save_quiz"  class="mt-1 btn btn-success">Сохранить</button>
                 </div>
         </form>
         {% endfor %}
@@ -64,55 +94,55 @@
         {%for res in data_1 %}
             <div class="row">
                 <div class="col">
-                    <h3 class="text-start fs-4">Вопрос №{{ res.question_num }}: {{ res.question[0] }}</h3> 
+                    <h3 class="text-start fs-4">Вопрос №{{ res.question_num }}: {{ res.question }}</h3> 
                 </div>
             </div>
             <div class="row">
-                {% if res.check == ['1'] %}
+                {% if res.check == 1 | int %}
                 <div class="col" style="color: rgb(0, 180, 0)">
-                    1) {{ res.option1[0] }}  
+                    1) {{ res.option1 }}  
                 </div>
                 {% else %}
                 <div class="col">
-                    1) {{ res.option1[0] }}
+                    1) {{ res.option1 }} 
                 </div>
                 {% endif %}
             </div>
             <div class="row">
-                {% if res.check == ['2'] %}
+                {% if res.check == 2 %}
                 <div class="col" style="color: rgb(0, 180, 0)">
-                    2) {{ res.option2[0] }}
+                    2) {{ res.option2 }}
                 </div>
                 {% else %}
                 <div class="col">
-                    2) {{ res.option2[0] }}
+                    2) {{ res.option2 }}
                 </div>
                 {% endif %}
             </div>
             <div class="row">
-                {% if res.check == ['3'] %}
+                {% if res.check == 3 %}
                 <div class="col" style="color: rgb(0, 180, 0)">
-                    3) {{ res.option3[0] }}
+                    3) {{ res.option3 }}
                 </div>
                 {% else %}
                 <div class="col">
-                    3) {{ res.option3[0] }}
+                    3) {{ res.option3 }}
                 </div>
                 {% endif %}
             </div>
             <div class="row">
-                {% if res.check == ['4'] %}
+                {% if res.check == 4 %}
                 <div class="col" style="color: rgb(0, 180, 0)">
-                    4) {{ res.option4[0] }}
+                    4) {{ res.option4 }}
                 </div>
                 {% else %}
                 <div class="col">
-                    4) {{ res.option4[0] }}
+                    4) {{ res.option4 }} 
                 </div>
                 {% endif %}
             </div>
             <div class="col mb-5">
-                <button name = "edit_question" value = "{{ res.resume_id }}" class="mt-1 btn btn-secondary">Редактировать</button>
+                <!-- <button name = "edit_question" value = "{{ res.question_num }}" class="mt-1 btn btn-secondary">Редактировать</button> -->
                 <button name = "delete_question" value = "{{ res.question_num }}" type = "submit" class="mt-1 btn btn-danger">Удалить</button>
             </div>
         {% endfor %}

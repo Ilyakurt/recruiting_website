@@ -1,20 +1,40 @@
 {% extends "base.html" %}
-{% block title%}Рекрутинг. Поиск вакасий{% endblock %}
+{% block title%}Отклики{% endblock %}
 {% block content %}
-{%for res in result%}	
-<!-- <div class="card" style="width: 40rem;"> -->
-    <div class="card-body">
-        <h2 class="card-text text-center">Пользователь {{ res.id_user }} заинтересовался вашей вакансией на должность - "{{ res.name }}"</h2>
-        <!-- <p class="card-text text-center">Требуется: {{ res.id }}</p> -->
-        <!-- <h2>{{ res.salary }}</h2> -->
-        <!-- <h2>{{ res.name }}</h2> -->
-        </form>
-    </div>
-	
-	<form method="POST">
-		<a  style="margin: 10px;" class="d-grid gap-2 col-5 mx-auto btn btn-primary" name="detail" value="{{ res.id }}">Посмотреть резюме</a>
-	</form>
 
-<!-- </div> -->
-{% endfor %}
-{% endblock %}
+
+<body>
+	<div class="container">
+		<div class="row mt-4">
+			<h2>Ваши вакансии</h2>
+		</div>
+		<table class="table mt-4">
+			<thead>
+			  <tr>
+				<th scope="col">Название вакансии</th>
+				<th scope="col">Адрес</th>
+				<th scope="col">Количество откликов</th>
+			  </tr>
+			</thead>
+
+			<tbody>
+				{% for res in result %}
+					<tr>
+					<th>
+						<a href="/response/{{ res.id }}">{{ res.name }}</a>			
+					</th>
+					<td>{{ res.address }}</td>
+					{% for otcl in otclick_result %}
+						{% if res.id == otcl.id_vac %}
+						<td>{{ otcl.count }}</td>
+						{% else %}
+						<td>0</td>
+						{% endif %}
+					{% endfor %}	
+					</tr>
+			  	{% endfor %}
+			</tbody>
+		</table>
+    </div>
+</body>
+{% endblock %} 

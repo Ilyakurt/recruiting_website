@@ -23,8 +23,8 @@ class PostsModel:
 
     def select_post(self, id):
         with UseDatabase(current_app.config['db']['postgres']) as cursor:
-            cursor.execute("""SELECT company, description, name, full_description, salary, email, address FROM vacancy WHERE id = %s""" % (id))
-            schema = ['company', 'description', 'name', 'full_description', 'salary', 'email', 'address']
+            cursor.execute("""SELECT company, description, name, full_description, salary, email, address, status, qid FROM vacancy WHERE id = %s""" % (id))
+            schema = ['company', 'description', 'name', 'full_description', 'salary', 'email', 'address', 'status', 'qid']
             result = []
             for con in cursor.fetchall():
                 result.append(dict(zip(schema, con)))
@@ -124,3 +124,41 @@ class PostsModel:
             res = str(cursor.fetchone())
         result = res[1:len(res) - 2]
         return result
+
+    def otclick_quiz(self, id, user, resume_id, qid):
+        with UseDatabase(current_app.config['db']['postgres']) as cursor:
+            cursor.execute("""
+                INSERT INTO user_vacancy(id_vac, id_user, resume_id, qid) 
+                VALUES (%s, %s, %s, %s) 
+                RETURNING status""" % (id, user, resume_id, qid))
+            res = str(cursor.fetchone())
+        result = res[1:len(res) - 2]
+        return result
+
+    def quiz_attach(self, vac_id, qid, status):
+        with UseDatabase(current_app.config['db']['postgres']) as cursor:
+            cursor.execute("""
+                UPDATE vacancy
+                SET
+                    qid = %s,
+                    status = %s
+                WHERE 1 = 1
+                    AND id = %s
+                RETURNING id
+                """ % (qid, status, vac_id))
+            res = str(cursor.fetchone())
+        result = res[1:-2]
+        return result
+
+    def delete_post(self, id):
+        with UseDatabase(current_app.config['db']['postgres']) as cursor:
+            cursor.execute("""
+                DELETE
+                FROM vacancy
+                WHERE 1 = 1
+                    AND id = %s
+                RETURNING id
+                """ % (id))
+            result =['Успешно']
+        return result
+        

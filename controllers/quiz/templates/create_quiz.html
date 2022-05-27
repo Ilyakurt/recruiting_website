@@ -10,7 +10,7 @@
                 <h2 class="text-start mt-4">Мои тесты</h2> 
                 <form method="post">
                     <button name="create_quiz" type="submit" class="btn mb-4 btn-outline-primary">Создать тест</button>
-                    <button name="create_resume" type="submit" class="btn mb-4 btn-outline-secondary">Посмотреть статистику</button>
+                    <!-- <a href = "/quiz/static" name="create_resume" class="btn mb-4 btn-outline-secondary">Посмотреть статистику</a> -->
                 </form>
             </div>	
         	{%for res in result%}
@@ -47,15 +47,16 @@
 			<form method="post">
 				<div class="col">
 					{%if res.status == 0 %}
-					<button name = "deactivation_resume" value = "{{ res.resume_id }}" class="mt-1 btn btn-secondary">Отправить на проверку</button>
+					<button name = "deactivation_resume" value = "{{res.qid}}" class="mt-1 btn btn-secondary">Отправить на проверку</button>
 					{% else %}
-					<button name = "deactivation_resume" value = "{{ res.resume_id }}" class="mt-1 btn btn-primary">Прикрепить</button>
+					<button name = "deactivation_resume" value = "{{res.resume_id}}" class="mt-1 btn btn-primary">Прикрепить</button>
 					<button name = "deactivation_resume" value = "{{ res.resume_id }}" class="mt-1 btn btn-warning">Изменить</button>
 					{% endif %}
-					<button name = "delete_resume" value = "{{ res.resume_id }}" type = "submit" class="mt-1 btn btn-danger">Удалить</button>
+					<button name = "delete_quiz" value = "{{ res.qid }}" type = "submit" class="mt-1 btn btn-danger">Удалить</button>
 				</div>
 			</form>
 			{% endfor %}
+			<div class="mt-5"></div>
 		</div>
 	</div>
 </body>
