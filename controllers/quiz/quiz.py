@@ -100,15 +100,11 @@ def quiz_create():
                 model = question.Quiz('postgres')
                 result = model.delete_quiz(qid)
                 return redirect(url_for('quiz_blueprint.quiz_create'))
-            if 'send_check' in request.form:
-                # qid = request.form['delete_quiz']
-                # model = question.Quiz('postgres')
-                # result = model.delete_quiz(qid)
-                return redirect(url_for('quiz_blueprint.quiz_create'))
-            if 'edit_quiz' in request.form:
-                # qid = request.form['delete_quiz']
-                # model = question.Quiz('postgres')
-                # result = model.delete_quiz(qid)
+            if 'check_resume' in request.form:
+                qid = request.form['check_resume']
+                model = question.Quiz('postgres')
+                status = 5 
+                result = model.update_status(qid, status)
                 return redirect(url_for('quiz_blueprint.quiz_create'))
     else:
         return redirect(url_for('quiz_blueprint.quiz'))

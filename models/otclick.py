@@ -32,6 +32,8 @@ class OtclickModel:
                 SELECT 
                     u.resume_id,
                     u.id_user, 
+                    u.status,
+                    u.qid, 
                     p.name, 
                     p.last_name, 
                     p.region,
@@ -45,7 +47,7 @@ class OtclickModel:
                 WHERE 1 = 1
                     AND id_vac = %s
             """ % (id_vac))
-            schema = ['resume_id', 'id_user', 'name', 'last_name', 'region', 'about']
+            schema = ['resume_id', 'id_user', 'status', 'qid', 'name', 'last_name', 'region', 'about']
             result = []
             for con in cursor.fetchall():
                 result.append(dict(zip(schema, con)))
@@ -62,3 +64,19 @@ class OtclickModel:
             res = str(cursor.fetchone())
         result = res[1:-2]
         return result      
+
+    def status_update(self, status, id_vac, id_user, resume_id):
+        print (status, id_vac, id_user, resume_id)
+        with UseDatabase(current_app.config['db']['postgres']) as cursor:
+            cursor.execute("""
+                UPDATE user_vacancy
+                SET status = %s
+                WHERE 1 = 1 
+                    AND id_vac = %s
+                    AND id_user = %s
+                    AND resume_id = %s
+                RETURNING id_vac
+                """ % (status, id_vac, id_user, resume_id))
+            res = str(cursor.fetchone())
+        result = res[1:-2]
+        return result    

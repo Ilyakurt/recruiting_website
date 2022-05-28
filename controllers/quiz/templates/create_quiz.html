@@ -24,6 +24,9 @@
 					{%if res.status == 0 %}
 					Тест не одобрен
 					{% endif %}
+					{%if res.status == 5 %}
+					Тест на одобрении
+					{% endif %}
 				</div>	
 			</div>
 			<div class="row">
@@ -36,21 +39,25 @@
 					Количество вопросов: {{ res.count }}
 				</div>	
 			</div>
-			<div class="row">
+			<!-- <div class="row">
 				<div class="col">
 					{%if res.status == 0 %}
 					{% else %}
 					Не прикреплено
 					{% endif %}
 				</div>	
-			</div>
+			</div> -->
 			<form method="post">
 				<div class="col">
 					{%if res.status == 0 %}
-					<button name = "deactivation_resume" value = "{{res.qid}}" class="mt-1 btn btn-secondary">Отправить на проверку</button>
-					{% else %}
-					<button name = "deactivation_resume" value = "{{res.resume_id}}" class="mt-1 btn btn-primary">Прикрепить</button>
-					<button name = "deactivation_resume" value = "{{ res.resume_id }}" class="mt-1 btn btn-warning">Изменить</button>
+						<button name = "check_resume" value = "{{res.qid}}" class="mt-1 btn btn-secondary">Отправить на проверку</button>
+					{% endif %}
+					{%if res.status == 1 %}
+						<a href = "/vacancy"  class="mt-1 btn btn-primary">Прикрепить</a>
+						<a href="/quiz/edit/{{ res.qid }}"  class="mt-1 btn btn-warning">Изменить</a>
+					{% endif %}
+					{%if res.status == 5 %}
+						<a href="/quiz/edit/{{ res.qid }}"  class="mt-1 btn btn-warning">Изменить</a>
 					{% endif %}
 					<button name = "delete_quiz" value = "{{ res.qid }}" type = "submit" class="mt-1 btn btn-danger">Удалить</button>
 				</div>

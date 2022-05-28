@@ -43,7 +43,6 @@ class VacancyModel:
                 SELECT company, description
                 FROM company
                 WHERE company = '%s'
-                    AND status != 0
                 """ % (company))
             schema = ['company', 'description']
             result = []

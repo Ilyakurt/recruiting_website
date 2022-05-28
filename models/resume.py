@@ -203,13 +203,20 @@ class ResumeModel:
     def select_response(self, user_id):
         with UseDatabase(current_app.config['db'][self.permission]) as cursor:
             cursor.execute("""
-                SELECT u.id_vac, v.name, u.id_user, u.status, v.company, salary
+                SELECT 
+                    u.id_vac, 
+                    v.name, 
+                    v.status, 
+                    u.id_user, 
+                    u.status, 
+                    v.company, 
+                    salary
                 FROM user_vacancy u
                 JOIN vacancy v
                 ON u.id_vac = v.id
                 WHERE u.id_user = %s
             """ % (user_id))
-            schema = ['id_vac', 'name', 'id_user', 'status', 'company', 'salary']
+            schema = ['id_vac', 'name', 'vac_status', 'id_user', 'status', 'company', 'salary']
             result = []
             for con in cursor.fetchall():
                 result.append(dict(zip(schema, con)))

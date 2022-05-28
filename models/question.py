@@ -206,3 +206,33 @@ class Quiz:
             result = res[1:len(res) - 2]
             print ("res", result)
         return result
+
+    def count_right_answer(self, user_id, qid):
+        with UseDatabase(current_app.config['db']['client']) as cursor:
+            cursor.execute("""
+                SELECT count(*)
+                FROM public.quiz_user_answers a
+                JOIN public.quiz_question q
+                ON a.qid = q.qid
+                    AND a.answer = q.answer
+                WHERE 1 = 1
+                    AND user_id = %s
+                    AND q.qid = %s
+                """ % (user_id, qid))
+            res = str(cursor.fetchone())
+            result = res[1:len(res) - 2]
+            return result
+
+    def update_status(self, qid, status):
+        with UseDatabase(current_app.config['db']['postgres']) as cursor:
+            cursor.execute("""
+                UPDATE quiz 
+                    SET status = %s
+                WHERE 
+                    qid = %s
+                RETURNING qid
+            """ % (status, qid))
+            res = str(cursor.fetchone())
+            result = res[1:len(res) - 2]
+            print ("res", result)
+        return result

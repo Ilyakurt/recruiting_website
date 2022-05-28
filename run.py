@@ -21,6 +21,9 @@ app.register_blueprint(main_blueprint, url_prefix='/')
 from controllers.profile.profile import profile_blueprint
 app.register_blueprint(profile_blueprint, url_prefix='/')
 
+from controllers.otclick.otclick import otclick_blueprint
+app.register_blueprint(otclick_blueprint, url_prefix='/')
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('error_url.html'), 404

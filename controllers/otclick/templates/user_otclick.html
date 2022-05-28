@@ -24,7 +24,10 @@
 				  <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Активные</button>
 				</li>
 				<li class="nav-item" role="presentation">
-				  <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Все отклики</button>
+				  <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Приглашения</button>
+				</li>
+				<li class="nav-item" role="presentation">
+					<button class="nav-link" id="rejection-tab" data-bs-toggle="tab" data-bs-target="#rejection" type="button" role="tab" aria-controls="rejection" aria-selected="false">Отказ</button>
 				</li>
 			  </ul>
 			  <form method="post">
@@ -53,10 +56,11 @@
 					</div>
 					<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
 						{%for res in result%}
+						{% if res.status == 3 %}
 						<div class="row">
-							<div class="col mt-3 fs-4" style="color:#00c3ff">
+							<a href="/employer_profile/{{ res.company }}" style="text-decoration: none; color:#00c3ff" class="col mt-3 fs-4">
 								{{ res.company }}
-							</div>
+							</a>
 							<div class="row">
 								<div class="col">
 									Должность: {{ res.name }}
@@ -68,7 +72,30 @@
 								</div>
 							</div>
 						</div>
-						<button name = "active_resume" value = "{{ res.resume_id }}"  class="mt-1 btn btn-secondary">Открыть вакансию</button>
+						<a href="/posts/{{ res.id_vac }}" style="text-decoration: none;"name = "active_resume" value = "{{ res.resume_id }}"  class="mt-1 btn btn-secondary">Открыть вакансию</a>
+						{% endif %}
+						{% endfor %}
+					</div>
+					<div class="tab-pane fade" id="rejection" role="tabpanel" aria-labelledby="rejection-tab">
+						{%for res in result%}
+						{% if res.status == 4 %}
+						<div class="row">
+							<a href="/employer_profile/{{ res.company }}" style="text-decoration: none; color:#00c3ff" class="col mt-3 fs-4">
+								{{ res.company }}
+							</a>
+							<div class="row">
+								<div class="col">
+									Должность: {{ res.name }}
+								</div>
+							</div>
+							<div class="row">
+								<div class="col">
+									Зарплата: {{ res.salary }}
+								</div>
+							</div>
+						</div>
+						<a href="/posts/{{ res.id_vac }}" style="text-decoration: none;"name = "active_resume" value = "{{ res.resume_id }}"  class="mt-1 btn btn-secondary">Открыть вакансию</a>
+						{% endif %}
 						{% endfor %}
 					</div>
 				</div>

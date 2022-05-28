@@ -89,8 +89,10 @@ def button(id):
 @main_blueprint.route('/employer_profile/<company>', methods=['GET', 'POST'])
 def employer_profile(company):
     if request.method == 'GET':
-        model = employer.EmployerModel('postgres')
+        print (company)
+        model = users.UsersModel('postgres')
         result = model.employer_company_profile(company)
+        print (result)
         if len(result) > 0:
             return render_template('employer_company_profle.html', result = result) 
         else:
@@ -131,44 +133,6 @@ def new_vacancy():
             return render_template('error_url.html')
     else:
         return render_template('error_url.html')
-
-@main_blueprint.route('/response')
-def response():
-    if session:
-        user_id = session['user_id']
-        role = session['role']
-        if request.method == 'GET':
-            if role == 'employer' or role == 'admin':
-                model = vacancy.VacancyModel('postgres')
-                result = model.user_vacancy(user_id)
-                otclick_model = otclick.OtclickModel('postgres')
-                otclick_result = otclick_model.select_otclick(user_id)
-                print (result)
-                print (otclick_result)
-                return render_template('response.html', result = result, otclick_result = otclick_result)
-            if role == 'client':
-                model = resume.ResumeModel('postgres')
-                result = model.select_response(user_id)
-                return render_template('user_otclick.html', result = result)
-    return redirect(url_for('main_blueprint.main'))
-
-@main_blueprint.route('/response/<int:id>')
-def response_resume(id):
-    if session:
-        if request.method == 'GET':
-            user_id = session['user_id']
-            role = session['role']
-            if role == 'employer' or role == 'admin':
-                model = otclick.OtclickModel('postgres')
-                check_result = model.check_user(user_id, id)
-                if int(check_result) == 1:
-                    result = model.vacancy_resume(id)
-                    print (result)
-                    return render_template('vacancy_otclick.html', result = result)
-                else: 
-                    return render_template('error_url.html')
-            return render_template('error_url.html')
-    return redirect(url_for('main_blueprint.main'))
 
 @main_blueprint.route('/vacancy', methods=['GET', 'POST'])
 def profile_vacancy():

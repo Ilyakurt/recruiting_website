@@ -53,6 +53,12 @@
 						<a class="nav-link active" aria-current="page" href="/response" name="new_vacancy">Отклики</a>
 					</li>
 					{%endif%}
+
+					{%if session['role'] == 'metodist' %}
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="/response" name="new_vacancy">Проверка</a>
+					</li>
+					{%endif%}
 					
 					{%if not session%}
 					<li class="nav-item">

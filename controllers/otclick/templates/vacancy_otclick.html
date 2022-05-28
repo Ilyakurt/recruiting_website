@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+{% block title%}Рекрутинг. Поиск вакасий{% endblock %}
+{% block content %}
+<!-- 
+	<nav class="navbar navbar-light bg-light">
+		<div class="container-fluid">
+		  <form class="d-flex">
+			<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+			<button class="btn btn-outline-success" type="submit">Search</button>
+		  </form>
+		</div>
+	  </nav> -->
+
+<body>
+	<div class="container">
+        <!-- <a href="/resume" class="btn mt-4 btn-primary">Создать резюме</a> -->
+        <!-- <h2 class="text-start mt-4">Мои резюме</h2>   -->
+        <div class="row">
+            <div class="col">
+                <h2 class="text-start mt-4">Соискатели</h2> 
+            </div>	
+			<ul class="nav nav-tabs" id="myTab" role="tablist">
+				<li class="nav-item" role="presentation">
+				  <button class="nav-link active" id="unassembled-tab" data-bs-toggle="tab" data-bs-target="#unassembled" type="button" role="tab" aria-controls="unassembled" aria-selected="true">Неразобранные</button>
+				</li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="think-tab" data-bs-toggle="tab" data-bs-target="#think" type="button" role="tab" aria-controls="think" aria-selected="false">Подумать</button>
+                  </li>
+                <li class="nav-item" role="presentation">
+                <button class="nav-link" id="invite-tab" data-bs-toggle="tab" data-bs-target="#invite" type="button" role="tab" aria-controls="invite" aria-selected="false">Интервью</button>
+                </li>
+				<li class="nav-item" role="presentation">
+				  <button class="nav-link" id="rejection-tab" data-bs-toggle="tab" data-bs-target="#rejection" type="button" role="tab" aria-controls="rejection" aria-selected="false">Отказ</button>
+				</li>
+            </ul>
+            <form method="post">
+				<div class="tab-content" id="myTabContent">
+					<div class="tab-pane fade show active" id="unassembled" role="tabpanel" aria-labelledby="unassembled-tab">
+						{%for res in result %}
+                            {% if res.status == 1 %}
+							<div class="row mt-3">
+								<div class="row">
+									<div class="col">
+										Имя: {{ res.name }} {{ res.last_name }} {{ res.qid }}
+									</div>
+								</div>
+								<div class="row">
+									<div class="col">
+										Регион: {{ res.region }}
+									</div>
+								</div>
+                                <div class="row">
+									<div class="col">
+										О себе: {{ res.about }}
+									</div>
+								</div>
+                                <div class="row">
+									<div class="col">
+										Результат теста: 7/7 - 100% 
+									</div>
+								</div>
+							</div>
+                            <div class="btn-group">
+							<a href="/user/{{res.id_user}}/{{res.resume_id}}" style="text-decoration: none;"name = "active_resume" value = "{{ res.resume_id }}"  class="mt-1 btn btn-secondary">Открыть резюме</a>
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle mt-1 ms-2" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Действие
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    <li><button name = "think" value = "1" class="btn dropdown-item" type="submit">Подумать</button></li>
+                                    <li><button name = "invite" value = "1" class="dropdown-item" type="submit">Пригласить</button></li>
+                                    <li><button name = "rejection" value = "1" class="dropdown-item" type="submit">Отказать</button></li>
+                                    <li><input value = "{{res.id_user}}" name = "id_user" class="dropdown-item" type="hidden"></input></li>
+                                    <li><input value = "{{res.resume_id}}" name = "resume_id" class="dropdown-item" type="hidden"></input></li>
+                                </ul>
+                              </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+					</div>
+					<div class="tab-pane fade" id="think" role="tabpanel" aria-labelledby="think-tab">
+						{%for res in result %}
+                            {% if res.status == 2 %}
+							<div class="row mt-3">
+								<div class="row">
+									<div class="col">
+										Имя: {{ res.name }} {{ res.last_name }}
+									</div>
+								</div>
+								<div class="row">
+									<div class="col">
+										Регион: {{ res.region }}
+									</div>
+								</div>
+                                <div class="row">
+									<div class="col">
+										О себе: {{ res.about }}
+									</div>
+								</div>
+                                <div class="row">
+									<div class="col">
+										Результат теста: 7/7 - 100% 
+									</div>
+								</div>
+							</div>
+                            <div class="btn-group">
+							<a href="/user/{{res.id_user}}/{{res.resume_id}}" style="text-decoration: none;"name = "active_resume" value = "{{ res.resume_id }}"  class="mt-1 btn btn-secondary">Открыть резюме</a>
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle mt-1 ms-2" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Действие
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    <li><button name = "invite" value = "1" class="dropdown-item" type="submit">Пригласить</button></li>
+                                    <li><button name = "rejection" value = "1" class="dropdown-item" type="submit">Отказать</button></li>
+                                    <li><input value = "{{res.id_user}}" name = "id_user" class="dropdown-item" type="hidden"></input></li>
+                                    <li><input value = "{{res.resume_id}}" name = "resume_id" class="dropdown-item" type="hidden"></input></li>
+                                </ul>
+                              </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+					</div>
+					<div class="tab-pane fade" id="invite" role="tabpanel" aria-labelledby="invite-tab">
+						{%for res in result %}
+                            {% if res.status == 3 %}
+							<div class="row mt-3">
+								<div class="row">
+									<div class="col">
+										Имя: {{ res.name }} {{ res.last_name }}
+									</div>
+								</div>
+								<div class="row">
+									<div class="col">
+										Регион: {{ res.region }}
+									</div>
+								</div>
+                                <div class="row">
+									<div class="col">
+										О себе: {{ res.about }}
+									</div>
+								</div>
+                                <div class="row">
+									<div class="col">
+										Результат теста: 7/7 - 100% 
+									</div>
+								</div>
+							</div>
+                            <div class="btn-group">
+							<a href="/user/{{res.id_user}}/{{res.resume_id}}" style="text-decoration: none;"name = "active_resume" value = "{{ res.resume_id }}"  class="mt-1 btn btn-secondary">Открыть резюме</a>
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle mt-1 ms-2" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Действие
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    <li><button name = "think" value = "1" class="btn dropdown-item" type="submit">Подумать</button></li>
+                                    <li><button name = "rejection" value = "1" class="dropdown-item" type="submit">Отказать</button></li>
+                                    <li><input value = "{{res.id_user}}" name = "id_user" class="dropdown-item" type="hidden"></input></li>
+                                    <li><input value = "{{res.resume_id}}" name = "resume_id" class="dropdown-item" type="hidden"></input></li>
+                                </ul>
+                              </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+					</div>
+					<div class="tab-pane fade" id="rejection" role="tabpanel" aria-labelledby="rejection-tab">
+						{%for res in result %}
+                            {% if res.status == 4 %}
+							<div class="row mt-3">
+								<div class="row">
+									<div class="col">
+										Имя: {{ res.name }} {{ res.last_name }}
+									</div>
+								</div>
+								<div class="row">
+									<div class="col">
+										Регион: {{ res.region }}
+									</div>
+								</div>
+                                <div class="row">
+									<div class="col">
+										О себе: {{ res.about }}
+									</div>
+								</div>
+                                <div class="row">
+									<div class="col">
+										Результат теста: 7/7 - 100% 
+									</div>
+								</div>
+							</div>
+                            <div class="btn-group">
+							<a href="/user/{{res.id_user}}/{{res.resume_id}}" style="text-decoration: none;"name = "active_resume" value = "{{ res.resume_id }}"  class="mt-1 btn btn-secondary">Открыть резюме</a>
+                            {% endif %}
+                        {% endfor %}
+					</div> 
+				</div>
+		    </form>
+        </div>
+    </div>
+</body>
+{% endblock %}

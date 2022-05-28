@@ -9,7 +9,7 @@
 						<div class="row mt-4">
 							<div class="col">
 								<h2 class="card-title">{{ res.company }}</h2>
-								<p class="card-text text-break">{{ res.description }}</p>
+								<p class="card-text text-break">{{ res.description | safe }}</p>
 							</div>
 						</div>
 					{% endfor %}
