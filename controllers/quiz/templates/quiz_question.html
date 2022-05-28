@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title%}Рекрутинг. Поиск вакасий{% endblock %}
+{% block content %}
+<body>
+	<div class="container">
+        <form method="post">
+        <div class="row">
+            <div class="row mt-4">
+                <a style="width: 200px" href="/quiz/check" class="btn ms-2 mb-4 btn-outline-primary" >Вернуться к проверке</a>
+            </div>
+            <div class="col">
+                <h2 class="text-start">{{ result[0]['subject'] }}</h2> 
+                <p class="card-text">{{ result[0]['description'] }}</p>
+            </div>	
+        </div>
+    </div>
+    <div class="container mt-5">
+        <form method="post">
+        {%for res in data_1 %}
+            <div class="row">
+                <div class="col">
+                    <h3 class="text-start fs-4">Вопрос: {{ res.question }}</h3> 
+                </div>
+            </div>
+            <div class="row">
+                {% if res.check == 1 | int %}
+                <div class="col" style="color: rgb(0, 180, 0)">
+                    1) {{ res.option1 }}  
+                </div>
+                {% else %}
+                <div class="col">
+                    1) {{ res.option1 }} 
+                </div>
+                {% endif %}
+            </div>
+            <div class="row">
+                {% if res.check == 2 %}
+                <div class="col" style="color: rgb(0, 180, 0)">
+                    2) {{ res.option2 }}
+                </div>
+                {% else %}
+                <div class="col">
+                    2) {{ res.option2 }}
+                </div>
+                {% endif %}
+            </div>
+            <div class="row">
+                {% if res.check == 3 %}
+                <div class="col" style="color: rgb(0, 180, 0)">
+                    3) {{ res.option3 }}
+                </div>
+                {% else %}
+                <div class="col">
+                    3) {{ res.option3 }}
+                </div>
+                {% endif %}
+            </div>
+            <div class="row">
+                {% if res.check == 4 %}
+                <div class="col" style="color: rgb(0, 180, 0)">
+                    4) {{ res.option4 }}
+                </div>
+                {% else %}
+                <div class="col">
+                    4) {{ res.option4 }} 
+                </div>
+                {% endif %}
+            </div>
+            <div class="col mb-3">
+                <!-- <button name = "edit_question" value = "{{ res.question_num }}" class="mt-1 btn btn-secondary">Редактировать</button> -->
+            </div>
+        {% endfor %}
+        {% if result[0]['status'] == 5 %}
+        <button name = "modification" value = "1" class="btn btn-secondary mt-1 mb-5" type="submit">Отправить на доработку</button>
+        <button name = "approve" value = "1" class="btn btn-success mt-1 mb-5" type="submit">Одобрить</button>
+        <input name = "qid" value = "{{ result[0]['qid'] }}" type="hidden"></input>
+        {% endif %}
+        </form>
+    </div>
+</body>
+{% endblock %}

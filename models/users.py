@@ -190,3 +190,41 @@ class UsersModel:
             result = str(cursor.fetchone())
             print (result)
         return result
+
+    def employer_check(self):
+        with UseDatabase(current_app.config['db'][self.permission]) as cursor:
+            cursor.execute("""
+                SELECT 
+                    c.company, 
+                    c.status, 
+                    e.name, 
+                    e.last_name, 
+                    e.phone, 
+                    e.email, 
+                    e.city, 
+                    e.address
+                FROM company c
+                JOIN employers e
+                ON c.company = e.company
+                WHERE 1 = 1 
+                    AND c.status != 1 """)
+            schema = ['company', 'status', 'name', 'last_name', 'phone', 'email', 'city', 'address']
+            result = []
+            for con in cursor.fetchall():
+                result.append(dict(zip(schema, con)))
+        return result
+
+    def employer_status(self, company, status):
+        with UseDatabase(current_app.config['db'][self.permission]) as cursor:
+            cursor.execute("""
+                UPDATE company
+                SET status = %s
+                WHERE company = '%s';
+
+                UPDATE employers
+                SET status = %s
+                WHERE company = '%s'
+                RETURNING company
+                """  % (status, company, status, company))
+            result = str(cursor.fetchone())
+        return result

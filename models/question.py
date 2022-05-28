@@ -87,6 +87,7 @@ class Quiz:
                     SELECT subject, status, qid, description
                     FROM quiz 
                     WHERE user_id = %s
+                    ORDER BY qid
                 """ % (user_id))
             schema = ['subject', 'status', 'qid', 'description']
             result = []
@@ -169,12 +170,27 @@ class Quiz:
                 result.append(dict(zip(schema, con)))
             return result
 
+    def quiz_description(self, qid):
+        with UseDatabase(current_app.config['db']['postgres']) as cursor:
+            cursor.execute("""
+                    SELECT subject, qid, description
+                    FROM quiz 
+                    WHERE 1 = 1 
+                    AND qid = %s
+                """ % (qid))
+            schema = ['subject','qid', 'description']
+            result = []
+            for con in cursor.fetchall():
+                result.append(dict(zip(schema, con)))
+            return result
+
     def quiz_attach(self, user_id):
         with UseDatabase(current_app.config['db']['postgres']) as cursor:
             cursor.execute("""
                     SELECT subject, status, qid, description
                     FROM quiz 
                     WHERE user_id = %s
+                    AND status = 1
                 """ % (user_id))
             schema = ['subject', 'status', 'qid', 'description']
             result = []
@@ -236,3 +252,25 @@ class Quiz:
             result = res[1:len(res) - 2]
             print ("res", result)
         return result
+
+    def quiz_check(self):
+        with UseDatabase(current_app.config['db']['postgres']) as cursor:
+            cursor.execute("""
+                    SELECT 
+                        q.subject,
+                        q.qid,
+                        q.description,
+                        q.status,
+                        e.company,
+                        e.email
+                    FROM public.quiz q
+                    JOIN public.employers e
+                        ON q.user_id = e.user_id
+                    WHERE 1 = 1
+                        AND q.status IN (4, 5)
+                """)
+            schema = ['subject', 'qid', 'description', 'status', 'company', 'email']
+            result = []
+            for con in cursor.fetchall():
+                result.append(dict(zip(schema, con)))
+            return result

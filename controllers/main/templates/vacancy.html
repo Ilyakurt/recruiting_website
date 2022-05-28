@@ -11,12 +11,16 @@
 <body>
 	
 	<div class="container">
-    <h2 class="p-2 text-start mt-4">Создание вакансии</h2>
+    
+	{% if result[0]['status'] != 1 %}
+	<h2 class="p-2 text-start mt-4">Необходимо получить одобрение в системе</h2>
+	{% else %}
+	<h2 class="p-2 text-start mt-4">Создание вакансии</h2>
     {% if success %}
     <div class="row p-2 text-start">
       <div class="col">
         <p style="color: green">
-          Вакансия успешно создана
+          Вакансия успешно создана 
         </p>
       </div>
     </div>
@@ -25,7 +29,7 @@
     <form method="post">
 		<div class="row">
 			<div class="col">
-				<label class="form-label">Название вакансии</label>
+				<label class="form-label">Название вакансии </label>
 				<input type="text" name = "name" id = "name" required class="form-control" placeholder="Название вакансии">
 			</div>
 		</div>
@@ -132,5 +136,6 @@
         <input name = "add_button" type="submit" value ="Опубликовать вакансию" class="mt-4 ms-2 mb-4 btn btn-success"></a>
     </form>
 </div>
+	{% endif %}
 </body>
 {% endblock %}

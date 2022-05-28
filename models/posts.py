@@ -12,6 +12,7 @@ class PostsModel:
             cursor.execute("""
                 SELECT company, description, salary, name, id 
                 FROM vacancy
+                WHERE status != 0
                 LIMIT 15
                 OFFSET %s
                 """ % (num_page))
@@ -93,6 +94,7 @@ class PostsModel:
                         OR LOWER(company) LIKE LOWER('%%%s%%')
                         OR LOWER(description) LIKE LOWER('%%%s%%')
                     )
+                    AND status = 1
             """ % (name, name, name))
             res = str(cursor.fetchone())
         result = res[1:len(res) - 2]
@@ -109,6 +111,7 @@ class PostsModel:
                         OR LOWER(company) LIKE LOWER('%%%s%%')
                         OR LOWER(description) LIKE LOWER('%%%s%%')
                     )
+                    AND status = 1
                 LIMIT 15
                 OFFSET %s
             """ % (name, name, name, num_page))

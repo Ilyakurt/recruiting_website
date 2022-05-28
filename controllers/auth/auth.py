@@ -139,7 +139,14 @@ def login_required(f):
 @logout_blueprint.route('/', methods=['GET', 'POST'])
 def logout():
     # logger.info(session['name'] + " вышел из системы")
-    session.pop('role')
-    session.pop('user_id')
-    session.pop('user')
+    if session['role'] == 'employer':
+        session.pop('role')
+        session.pop('user_id')
+        session.pop('user')
+        session.pop('company')
+    else:
+        session.pop('role')
+        session.pop('user_id')
+        session.pop('user')  
+         
     return redirect(url_for('auth_blueprint.authorization'))

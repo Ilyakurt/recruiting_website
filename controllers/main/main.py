@@ -105,8 +105,10 @@ def new_vacancy():
             if request.method == 'GET':
                 user_id = session['user_id']
                 quiz_model = question.Quiz('postgres')
+                model = users.UsersModel('postgres')
+                result = model.employer_check()
                 quiz_res = quiz_model.quiz_attach(user_id)
-                return render_template('vacancy.html', quiz_res = quiz_res)
+                return render_template('vacancy.html', result = result, quiz_res = quiz_res)
             if request.method == 'POST':
                 if 'add_button' in request.form:
                     company = session['company']
@@ -214,7 +216,7 @@ def profile():
         if request.method == 'GET':
             success = request.args.get('success', 'True')
             print (success)
-            if session['role'] == 'client':
+            if session['role'] == 'client' or session['role'] == 'metodist' or session['role'] == 'moderator':
                 user = session['user_id']
                 model = users.UsersModel('postgres')
                 result = model.profile(user)
@@ -285,3 +287,36 @@ def profile():
     else:
         return redirect(url_for('main_blueprint.main'))
 
+
+
+@main_blueprint.route('/request', methods=['GET', 'POST'])
+def request_employer():
+    if session:
+        if session['role'] == 'moderator':
+            if request.method == 'GET':
+                model = users.UsersModel('postgres')
+                result = model.employer_check()
+                print (result)
+                return render_template('employer_check.html', result = result)
+            if request.method == 'POST':
+                if 'approve' in request.form:
+                    company = request.form['company']
+                    model = users.UsersModel('postgres')
+                    status = 1
+                    result = model.employer_status(company, status)
+                    return redirect(url_for('main_blueprint.request_employer'))
+                if 'modification' in request.form:
+                    company = request.form['company']
+                    model = users.UsersModel('postgres')
+                    status = 2
+                    result = model.employer_status(company, status)
+                    return redirect(url_for('main_blueprint.request_employer'))
+                if 'rejection' in request.form:
+                    company = request.form['company']
+                    model = users.UsersModel('postgres')
+                    status = 3
+                    result = model.employer_status(company, status)
+                    return redirect(url_for('main_blueprint.request_employer'))
+
+        return render_template('error_url.html')
+    return render_template('error_url.html')

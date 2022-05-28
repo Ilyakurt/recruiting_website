@@ -51,7 +51,7 @@
                       <p class="card-title">При успешном прохождении общего теста работодатель может пригласить вас для дальнейшего общения.</p>
                       {%if session %}
                       <a href="/quiz/list" class="btn mt-2 btn-primary">Перейти к тестам</a>
-					  {%if session['role'] != 'client' %}
+					  {%if session['role'] == 'employer' or session['role'] == 'metodist'  %}
 					  <a href="/quiz/create" class="btn mt-2 btn-outline-primary">Перейти к созданию тестов</a>
 					  {% endif %}
 					  {% else %}

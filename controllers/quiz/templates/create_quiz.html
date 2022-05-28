@@ -7,6 +7,9 @@
         <!-- <h2 class="text-start mt-4">Мои резюме</h2>   -->
         <div class="row">
             <div class="col">
+				{% if check[0]['status'] != 1 %}
+				<h2 class="text-start mt-4">Необходимо получить одобрение в системе</h2> 
+				{% else %}
                 <h2 class="text-start mt-4">Мои тесты</h2> 
                 <form method="post">
                     <button name="create_quiz" type="submit" class="btn mb-4 btn-outline-primary">Создать тест</button>
@@ -19,16 +22,21 @@
 					<a href="/quiz/edit/{{ res.qid }}" style="color:#00c3ff" class="fs-4">{{ res.subject }}</a>
 				</div>
 			</div>
+			{%if session['role'] == 'employer' %}
 			<div class="row">
 				<div class="col" style="color:#ff0000">
 					{%if res.status == 0 %}
-					Тест не одобрен
+					Требуется отправить тест на проверку
 					{% endif %}
 					{%if res.status == 5 %}
 					Тест на одобрении
 					{% endif %}
+					{%if res.status == 4 %}
+					Тест не одобрен. Его требуется изменить
+					{% endif %}
 				</div>	
 			</div>
+			{% endif %}
 			<div class="row">
 				<div class="col">
 					{{ res.description }} 
@@ -49,21 +57,33 @@
 			</div> -->
 			<form method="post">
 				<div class="col">
-					{%if res.status == 0 %}
+					{%if session['role'] == 'employer' %}
+					{%if res.status == 0 or res.status == 4 %}
 						<button name = "check_resume" value = "{{res.qid}}" class="mt-1 btn btn-secondary">Отправить на проверку</button>
 					{% endif %}
 					{%if res.status == 1 %}
 						<a href = "/vacancy"  class="mt-1 btn btn-primary">Прикрепить</a>
-						<a href="/quiz/edit/{{ res.qid }}"  class="mt-1 btn btn-warning">Изменить</a>
 					{% endif %}
 					{%if res.status == 5 %}
-						<a href="/quiz/edit/{{ res.qid }}"  class="mt-1 btn btn-warning">Изменить</a>
+					<button name = "cancellation" value = "{{res.qid}}" class="mt-1 btn btn-secondary">Отменить проверку</button>
 					{% endif %}
 					<button name = "delete_quiz" value = "{{ res.qid }}" type = "submit" class="mt-1 btn btn-danger">Удалить</button>
+					{% endif %}
+
+					{%if session['role'] == 'metodist' %}
+					{%if res.status == 0 or res.status == 3 %}
+					<button name = "publish" value = "{{res.qid}}" class="mt-1 btn btn-primary">Опубликовать</button>
+					{% endif %}
+					{%if res.status == 2 %}
+					<button name = "invisible" value = "{{res.qid}}" class="mt-1 btn btn-secondary">Снять с публикации</button>
+					{% endif %}
+					<button name = "delete_quiz" value = "{{ res.qid }}" type = "submit" class="mt-1 btn btn-danger">Удалить</button>
+					{% endif %}
 				</div>
 			</form>
 			{% endfor %}
 			<div class="mt-5"></div>
+			{% endif %}
 		</div>
 	</div>
 </body>

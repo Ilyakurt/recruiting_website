@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title%}Рекрутинг. Поиск вакасий{% endblock %}
+{% block content %}
+<!-- 
+	<nav class="navbar navbar-light bg-light">
+		<div class="container-fluid">
+		  <form class="d-flex">
+			<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+			<button class="btn btn-outline-success" type="submit">Search</button>
+		  </form>
+		</div>
+	  </nav> -->
+
+<body>
+	<div class="container">
+        <!-- <a href="/resume" class="btn mt-4 btn-primary">Создать резюме</a> -->
+        <!-- <h2 class="text-start mt-4">Мои резюме</h2>   -->
+        <div class="row">
+            <div class="col">
+                <h2 class="text-start mt-4">Проверка тестов</h2> 
+            </div>	
+			<ul class="nav nav-tabs" id="myTab" role="tablist">
+				<li class="nav-item" role="presentation">
+				  <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">На проверке</button>
+				</li>
+				<li class="nav-item" role="presentation">
+				  <button class="nav-link" id="change-tab" data-bs-toggle="tab" data-bs-target="#change" type="button" role="tab" aria-controls="change" aria-selected="false">На изменении</button>
+				</li>
+			  </ul>
+			  <form method="post">
+				<div class="tab-content" id="myTabContent">
+					<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+						{%for res in result%}
+							{% if res.status == 5 %}
+							<div class="row">
+								<a href="/employer_profile/{{ res.company }}" style="text-decoration: none; color:#00c3ff" class="col mt-3 fs-4">
+									{{ res.subject }}
+								</a>
+								<div class="row">
+									<div class="col">
+										Описание: {{ res.description }}
+									</div>
+								</div>
+								<div class="row">
+									<div class="col">
+										Компания: {{ res.company }}
+									</div>
+								</div>
+								<div class="row">
+									<div class="col">
+										Почта для связи: {{ res.email }}
+									</div>
+								</div>
+							</div>
+							<a href="/quiz/check/{{ res.qid }}" style="text-decoration: none;"name = "active_resume" value = "{{ res.resume_id }}"  class="mt-1 btn btn-primary">Просмотреть тест</a>
+							<button name = "modification" value = "1" class="btn btn-secondary mt-1" type="submit">Отправить на доработку</button>
+							<button name = "approve" value = "1" class="btn btn-success mt-1" type="submit">Одобрить</button>
+							<input name = "qid" value = "{{ res.qid }}" type="hidden"></input>
+							{% endif %}
+						{% endfor %}
+					</div>
+					<div class="tab-pane fade" id="change" role="tabpanel" aria-labelledby="change-tab">
+						{%for res in result%}
+							{% if res.status == 4 %}
+							<div class="row">
+								<a href="/employer_profile/{{ res.company }}" style="text-decoration: none; color:#00c3ff" class="col mt-3 fs-4">
+									{{ res.subject }}
+								</a>
+								<div class="row">
+									<div class="col">
+										Описание: {{ res.description }}
+									</div>
+								</div>
+								<div class="row">
+									<div class="col">
+										Компания: {{ res.company }}
+									</div>
+								</div>
+								<div class="row">
+									<div class="col">
+										Почта для связи: {{ res.email }}
+									</div>
+								</div>
+							</div>
+							<a href="/quiz/check/{{ res.qid }}" style="text-decoration: none;"name = "active_resume" value = "{{ res.resume_id }}"  class="mt-1 btn btn-primary">Просмотреть тест</a>
+							<input name = "qid" value = "{{ res.qid }}" type="hidden"></input>
+							{% endif %}
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</form>
+    </div>
+</body>
+{% endblock %}

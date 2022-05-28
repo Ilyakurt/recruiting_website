@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title%}Рекрутинг. Поиск вакасий{% endblock %}
+{% block content %}
+<!-- 
+	<nav class="navbar navbar-light bg-light">
+		<div class="container-fluid">
+		  <form class="d-flex">
+			<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+			<button class="btn btn-outline-success" type="submit">Search</button>
+		  </form>
+		</div>
+	  </nav> -->
+
+<body>
+	<div class="container">
+        <!-- <a href="/resume" class="btn mt-4 btn-primary">Создать резюме</a> -->
+        <!-- <h2 class="text-start mt-4">Мои резюме</h2>   -->
+        <div class="row">
+            <div class="col">
+                <h2 class="text-start mt-4">Заявки на регистрацию работодателей в системе</h2> 
+            </div>	
+			<ul class="nav nav-tabs" id="myTab" role="tablist">
+				<li class="nav-item" role="presentation">
+				  <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Не разобраны</button>
+				</li>
+				<li class="nav-item" role="presentation">
+				  <button class="nav-link" id="correction-tab" data-bs-toggle="tab" data-bs-target="#correction" type="button" role="tab" aria-controls="correction" aria-selected="false">На уточнении</button>
+				</li>
+				<li class="nav-item" role="presentation">
+                    <button class="nav-link" id="rejection-tab" data-bs-toggle="tab" data-bs-target="#rejection" type="button" role="tab" aria-controls="rejection" aria-selected="false">Отказано</button>
+                </li>
+			  </ul>
+			  <form method="post">
+				<div class="tab-content" id="myTabContent">
+					<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+						{%for res in result%}
+							{% if res.status == 0 %}
+							<div class="row">
+								<a href="/employer_profile/{{ res.company }}" style="text-decoration: none; color:#00c3ff" class="col mt-3 fs-4">
+									{{ res.company }}
+								</a>
+								<div class="row">
+									<div class="col">
+										{{ res.name }} {{ res.last_name }}
+									</div>
+								</div>
+                                <div class="row">
+									<div class="col">
+										Регион: {{ res.city }}
+									</div>
+								</div>
+                                <div class="row">
+									<div class="col">
+										Адрес: {{ res.address }}
+									</div>
+								</div>
+								<div class="row">
+									<div class="col">
+										Телефон: {{ res.phone }}
+									</div>
+								</div>
+								<div class="row">
+									<div class="col">
+										Почта: {{ res.email }}
+									</div>
+								</div>
+							</div>
+                            <button name = "approve" value = "1" class="btn btn-success mt-1" type="submit">Одобрить</button>
+							<button name = "modification" value = "1" class="btn btn-secondary mt-1" type="submit">На уточнение</button>
+							<button name = "rejection" value = "1" class="btn btn-danger mt-1" type="submit">Отказать</button>
+							<input name = "company" value = "{{ res.company }}" type="hidden"></input>
+							{% endif %}
+						{% endfor %}
+					</div>
+					<div class="tab-pane fade" id="correction" role="tabpanel" aria-labelledby="correction-tab">
+						{%for res in result%}
+							{% if res.status == 2 %}
+							<div class="row">
+								<a href="/employer_profile/{{ res.company }}" style="text-decoration: none; color:#00c3ff" class="col mt-3 fs-4">
+									{{ res.company }}
+								</a>
+								<div class="row">
+									<div class="col">
+										{{ res.name }} {{ res.last_name }}
+									</div>
+								</div>
+                                <div class="row">
+									<div class="col">
+										Регион: {{ res.city }}
+									</div>
+								</div>
+                                <div class="row">
+									<div class="col">
+										Адрес: {{ res.address }}
+									</div>
+								</div>
+								<div class="row">
+									<div class="col">
+										Телефон: {{ res.phone }}
+									</div>
+								</div>
+								<div class="row">
+									<div class="col">
+										Почта: {{ res.email }}
+									</div>
+								</div>
+							</div>
+                            <button name = "approve" value = "1" class="btn btn-success mt-1" type="submit">Одобрить</button>
+							<button name = "rejection" value = "1" class="btn btn-danger mt-1" type="submit">Отказать</button>
+							<input name = "company" value = "{{ res.company }}" type="hidden"></input>
+							{% endif %}
+						{% endfor %}
+					</div>
+                    <div class="tab-pane fade" id="rejection" role="tabpanel" aria-labelledby="rejection-tab">
+						{%for res in result%}
+							{% if res.status == 3 %}
+							<div class="row">
+								<a href="/employer_profile/{{ res.company }}" style="text-decoration: none; color:#00c3ff" class="col mt-3 fs-4">
+									{{ res.company }}
+								</a>
+								<div class="row">
+									<div class="col">
+										{{ res.name }} {{ res.last_name }}
+									</div>
+								</div>
+                                <div class="row">
+									<div class="col">
+										Регион: {{ res.city }}
+									</div>
+								</div>
+                                <div class="row">
+									<div class="col">
+										Адрес: {{ res.address }}
+									</div>
+								</div>
+								<div class="row">
+									<div class="col">
+										Телефон: {{ res.phone }}
+									</div>
+								</div>
+								<div class="row">
+									<div class="col">
+										Почта: {{ res.email }}
+									</div>
+								</div>
+							</div>
+							{% endif %}
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</form>
+    </div>
+</body>
+{% endblock %}

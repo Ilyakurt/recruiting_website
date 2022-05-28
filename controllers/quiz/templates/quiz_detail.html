@@ -12,9 +12,11 @@
 			<div class="card-body">
 				<h2 class="card-title text-start">Тема: {{ res.subject }}</h2>
 				<p class="card-text text-start"> {{ res.description }}</p>
+				{% if session['role'] == 'client' %}
 				<form method="POST">
 					<button type="submit" name="quiz" class="btn btn-primary">Приступить к выполнению</button>
 				</form>
+				{% endif %}
 			</div>
 			{% endfor %}
 		</div>
